@@ -29,7 +29,11 @@ export default function EditParties({
   var [Add, setAdd] = useState(party.Add);
   var [groups, setGropus] = useState({ name: party?.group, done: true });
   var [OpeningBalance, setOpeningBalance] = useState(party.OpeningBalance);
+
+    var [OpBalState, setOpBalState] = useState(0);
   var [asDate, setAsDate] = useState(party.asDate);
+    var [OpeningLoyaltyPoints, setOpeningLoyaltyPoints] = useState("");
+    var [asDateL, setAsDateL] = useState("");
   var [AddF1, setAddF1] = useState(party.AddF1);
   var [AddF2, setAddF2] = useState(party.AddF2);
   var [AddF3, setAddF3] = useState(party.AddF3);
@@ -68,31 +72,34 @@ export default function EditParties({
       newDa.parties[index] = { ...newDa.parties[index], ...newData };
     }
     console.log(newDa.parties[index]);
+    const existingTransaction = newDa.Transactions.find((item) => item.name === partyName);
 
-    OpeningBalance
-      ? newDa.Transactions.push({
+    if (OpeningBalance) {
+      if (existingTransaction) {
+        // Update the existing transaction
+        existingTransaction.type = "Opening Balance";
+        existingTransaction.date = asDate.toLocaleString("en-GB", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+        existingTransaction.state=OpBalState;
+        existingTransaction.amount = parseFloat(OpeningBalance);
+      } else {
+        // Add new transaction if not found
+        newDa.Transactions.push({
           type: "Opening Balance",
           name: partyName,
-          date: new Date(Date.now()).toLocaleString("en-GB", {
+          date: asDate.toLocaleString("en-GB", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
           }),
-          // date: Date.now(),
+          state:OpBalState,
           amount: parseFloat(OpeningBalance),
-        })
-      : (newDa.Transactions = [
-          {
-            type: "Opening Balance",
-            name: partyName,
-            date: new Date(Date.now()).toLocaleString("en-GB", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            }),
-            amount: parseFloat(OpeningBalance),
-          },
-        ]);
+        });
+      }
+    }
 
     console.log(newDa);
     setData(newDa);
@@ -296,18 +303,63 @@ export default function EditParties({
           {page === "Credit" && (
             <div className="flex flex-col">
               <div className="div s">
+                <div className="flex">
+                  <CustomInput
+                    inputValue={OpeningBalance}
+                    setInputValue={setOpeningBalance}
+                    placeholder={"Opening balance"}
+                  />
+                  {OpeningBalance && (
+                    // <select name="" id="">
+                    //   <option value="">To Pay</option>
+                    //   <option value="">To Recieve</option>
+                    // </select>
+                    <div className="flex gap-2">
+                      <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            autoComplete="off"
+                            type="radio"
+                            name="balanceType"
+                            id="toPay"
+                            onClick={()=>setOpBalState(0)}
+                          />
+                          <span>To Pay</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            autoComplete="off"
+                            type="radio"
+                            name="balanceType"
+                            id="toRecieve"
+                            onClick={()=>setOpBalState(1)}
+                          />
+                          <span>To Recieve</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="date"
+                  value={asDate}
+                  onChange={(e) => setAsDate(e.target.value)}
+                  id="birthday"
+                  name="birthday"
+                ></input>
+              </div>
+              <div className="div s">
                 <CustomInput
-                  inputValue={OpeningBalance}
-                  setInputValue={setOpeningBalance}
-                  placeholder={"Opening balance"}
+                  inputValue={OpeningLoyaltyPoints}
+                  setInputValue={setOpeningLoyaltyPoints}
+                  placeholder={"Opening Loyalty Pts"}
                 />
-<input
-  type="date"
-  value={asDate}
-  onChange={(e) => setAsDate(e.target.value)}
-  id="birthday"
-  name="birthday"
-></input>
+                <input
+                  type="date"
+                  onChange={(e) => setAsDateL(e.target.value)}
+                  id="birthday"
+                  name="birthday"
+                ></input>
               </div>
               <div className="div">
                 <div className="flex flex-col">

@@ -3,7 +3,7 @@ import Login from "./pages/login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import "./style.scss";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Dashboard from "./pages/dashboard";
 import Parties from "./pages/parties";
 import Items from "./pages/items";
@@ -58,8 +58,8 @@ import PurchaseOrderBill from "./pages/purchase/PurchaseOrderBill";
 import AddPaymentsOut from "./pages/purchase/addpaymentOut";
 import AddPurchaseReturn from "./pages/purchase/addPurchaseReturn";
 import PurchaseReturnBill from "./pages/purchase/PurchaseReturnBill";
-import EditableGrid from "./components/EditGrid";
 import SalesBill from "./pages/sales/SalesBill";
+import Superadmin from "./pages/superadmin"
 
 function App() {
   // const Navigate = useNavigate();
@@ -93,30 +93,35 @@ function App() {
   const updateData = () => {
     setloading2(true);
     localStorage.setItem("data", data);
-    try {
-      let url = dev_url + "editData";
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: uid, // Modify this if necessary
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("updated");
-          setloading2(false);
-          localStorage.setItem("edited", false);
+    if(uid){
+
+      try {
+        let url = dev_url + "editData";
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: uid, // Modify this if necessary
+          },
+          body: JSON.stringify(data),
         })
-        .catch((error) => {
-          setloading2(false);
-          console.error("Error:", error);
-        });
-    } catch (e) {
-      setloading2(false);
-      localStorage.setItem("edited", true);
-      alert("unable to save to remote server");
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("updated");
+            setloading2(false);
+            localStorage.setItem("edited", false);
+          })
+          .catch((error) => {
+            setloading2(false);
+            console.error("Error:", error);
+          });
+      } catch (e) {
+        setloading2(false);
+        localStorage.setItem("edited", true);
+        alert("unable to save to remote server");
+      }
+    }else{
+      console.error("Error Logging in, please login again")
     }
   };
   useEffect(() => {
@@ -125,27 +130,145 @@ function App() {
   }, [data, change]);
 
   const fetchData = () => {
-    fetch(dev_url + "/get_user", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: uid, // Modify this if necessary
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log("fetched");
-        // console.log("Data fetch:", data);
-        setData(data.data || []); // Ensure data is always an array
-        setloading(false);
+    if(uid){
+
+      fetch(dev_url + "/get_user", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: uid, // Modify this if necessary
+        },
       })
-      .catch((error) => {
-        setloading(false);
-        setError(true);
-        console.error("Error:", error);
-        setData({ serverError: true });
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log("fetched");
+          // console.log("Data fetch:", data);
+          setData(data.data || []); // Ensure data is always an array
+          setloading(false);
+        })
+        .catch((error) => {
+          setloading(false);
+          setError(true);
+          console.error("Error:", error);
+          setData({ serverError: true });
+        });
+    }else{
+      console.error("Error Logging in, please login again")
+    }
   };
+
+  if (!uid) {
+    return(
+      <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+      {loading2 && (
+        <div className="loading">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+            <circle
+              fill="#FF156D"
+              stroke="#FF156D"
+              strokeWidth="15"
+              r="15"
+              cx="35"
+              cy="100"
+            >
+              <animate
+                attributeName="cx"
+                calcMode="spline"
+                dur="2"
+                values="35;165;165;35;35"
+                keySplines="0 .1 .5 1;0 .1 .5 1;0 .1 .5 1;0 .1 .5 1"
+                repeatCount="indefinite"
+                begin="0"
+              ></animate>
+            </circle>
+            <circle
+              fill="#FF156D"
+              stroke="#FF156D"
+              strokeWidth="15"
+              opacity=".8"
+              r="15"
+              cx="35"
+              cy="100"
+            >
+              <animate
+                attributeName="cx"
+                calcMode="spline"
+                dur="2"
+                values="35;165;165;35;35"
+                keySplines="0 .1 .5 1;0 .1 .5 1;0 .1 .5 1;0 .1 .5 1"
+                repeatCount="indefinite"
+                begin="0.05"
+              ></animate>
+            </circle>
+            <circle
+              fill="#FF156D"
+              stroke="#FF156D"
+              strokeWidth="15"
+              opacity=".6"
+              r="15"
+              cx="35"
+              cy="100"
+            >
+              <animate
+                attributeName="cx"
+                calcMode="spline"
+                dur="2"
+                values="35;165;165;35;35"
+                keySplines="0 .1 .5 1;0 .1 .5 1;0 .1 .5 1;0 .1 .5 1"
+                repeatCount="indefinite"
+                begin=".1"
+              ></animate>
+            </circle>
+            <circle
+              fill="#FF156D"
+              stroke="#FF156D"
+              strokeWidth="15"
+              opacity=".4"
+              r="15"
+              cx="35"
+              cy="100"
+            >
+              <animate
+                attributeName="cx"
+                calcMode="spline"
+                dur="2"
+                values="35;165;165;35;35"
+                keySplines="0 .1 .5 1;0 .1 .5 1;0 .1 .5 1;0 .1 .5 1"
+                repeatCount="indefinite"
+                begin=".15"
+              ></animate>
+            </circle>
+            <circle
+              fill="#FF156D"
+              stroke="#FF156D"
+              strokeWidth="15"
+              opacity=".2"
+              r="15"
+              cx="35"
+              cy="100"
+            >
+              <animate
+                attributeName="cx"
+                calcMode="spline"
+                dur="2"
+                values="35;165;165;35;35"
+                keySplines="0 .1 .5 1;0 .1 .5 1;0 .1 .5 1;0 .1 .5 1"
+                repeatCount="indefinite"
+                begin=".2"
+              ></animate>
+            </circle>
+          </svg>
+        </div>
+      )}
+    </div>
+    )
+  }
 
   if (loading || !data) {
     return <Loader />;
@@ -404,9 +527,6 @@ function App() {
             path="/sales-bill"
             exact
             element={
-              // <Home part="items">
-              //   <AddItems />
-              // </Home>
               <SalesBill
                 data={data}
                 setData={setData}
@@ -419,9 +539,6 @@ function App() {
             path="/addPurchase"
             exact
             element={
-              // <Home part="items">
-              //   <AddItems />
-              // </Home>
               <AddPurchase
                 data={data}
                 setData={setData}
@@ -937,6 +1054,13 @@ function App() {
                   setChange={setChange}
                 />
               </Home>
+            }
+          />
+          <Route
+            path="/Superadmin"
+            exact
+            element={
+              <Superadmin/>
             }
           />
         </Routes>

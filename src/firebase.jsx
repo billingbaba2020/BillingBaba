@@ -52,6 +52,59 @@ const firebaseConfig = {
   measurementId: "G-WP7KYER515"
 };
 const app = initializeApp(firebaseConfig);
+const registerWithPhoneAndPassword = async (phoneNumber, password, containerId) => {
+  const confirmationResult = await signInWithPhoneNum(phoneNumber, containerId);
+  if (!confirmationResult) return false;
+
+  // Wait for OTP verification
+  window.confirmationResult.confirm = async (otp) => {
+    try {
+      const result = await window.confirmationResult.confirm(otp);
+      const user = result.user;
+
+      // Add phone-password combo to Firestore (password should be hashed ideally)
+      await addDoc(collection(db, "users"), {
+        uid: user.uid,
+        phoneNumber,
+        password, // 🔒 Ideally use bcrypt hash
+        authProvider: "phone-password",
+      });
+
+      return { data: user, newUser: true };
+    } catch (error) {
+      console.error(error);
+      alert("OTP verification failed");
+    }
+  };
+};
+
+const loginWithPhoneAndPassword = async (phoneNumber, password) => {
+  try {
+    const q = query(
+      collection(db, "users"),
+      where("phoneNumber", "==", phoneNumber)
+    );
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      alert("User not found");
+      return null;
+    }
+
+    const userData = querySnapshot.docs[0].data();
+    if (userData.password !== password) {
+      alert("Incorrect password");
+      return null;
+    }
+
+    // Fake login success since we aren't signing in via Firebase Auth
+    // You can optionally link to anonymous user or handle session manually
+    return { data: userData, newUser: false };
+  } catch (error) {
+    console.error("Login failed:", error);
+    alert("Error logging in with phone + password");
+  }
+};
+
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -249,5 +302,7 @@ export {
   saveUidToLocalStorage,
   getUidFromLocalStorage,
   signInWithPhoneNum,
-  verifyOTP
+  verifyOTP,
+  loginWithPhoneAndPassword,
+  registerWithPhoneAndPassword,
 };

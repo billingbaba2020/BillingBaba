@@ -3,6 +3,7 @@ import CustomInput from "../components/customInput";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import TextField from "@mui/material/TextField";
+import { Autocomplete, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 export default function AddParties({ data, setData, change, setChange }) {
   const Navigate = useNavigate();
@@ -27,6 +28,18 @@ export default function AddParties({ data, setData, change, setChange }) {
   var [AddF1, setAddF1] = useState("");
   var [AddF2, setAddF2] = useState("");
   var [AddF3, setAddF3] = useState("");
+
+
+  const [GrpPgInps, setGrpPgInps] = useState({ st: false, val: "" });
+  var [AddGrp, setAddGrp] = useState(false);
+  const AddGrpfn = (grp) => {
+    let newDa = data;
+    newDa.groups ? newDa.groups.push(grp) : (newDa.groups = [grp]);
+    setData(newDa);
+    setChange(!change);
+    setAddGrp(false);
+  };
+
   const [isFocused, setIsFocused] = useState(false);
 
   var [OpBalState, setOpBalState] = useState(0);
@@ -161,30 +174,122 @@ export default function AddParties({ data, setData, change, setChange }) {
           </div>
         </div>
         <div className="c1">
-          <div className="p1">
-            <CustomInput
+          <div className="p1 mb-3">
+            {/* <CustomInput
               inputValue={partyName}
               setInputValue={setPartyName}
               placeholder={"Party Name *"}
-            />
-            <CustomInput
+            /> */}
+            <TextField
+                    value={partyName}
+                    onChange={(e) => setPartyName(e.target.value)}
+                    id="outlined-basic"
+                    label="*Party Name"
+                    variant="outlined"
+                  />
+            {/* <CustomInput
               inputValue={GSTIN}
               setInputValue={setGSTIN}
               placeholder={"GSTIN"}
-            />
-            <CustomInput
+            /> */}
+            <TextField
+                    value={GSTIN}
+                    onChange={(e) => setGSTIN(e.target.value)}
+                    id="outlined-basic"
+                    label="GSTIN"
+                    variant="outlined"
+                  />
+            {/* <CustomInput
               inputValue={phoneNo}
               setInputValue={setPhoneNo}
               placeholder={"Phone Number"}
-            />
+            /> */}
+            <TextField
+                    value={phoneNo}
+                    onChange={(e) => setPhoneNo(e.target.value)}
+                    id="outlined-basic"
+                    label="Phone Number"
+                    variant="outlined"
+                  />
             {/* <button>Select Unit</button> */}
           </div>
-          <div>
+            {AddGrp && (
+
+          <div className="fixed top-0 left-0 h-screen z-20 w-screen bg-gray-500 bg-opacity-50 flex justify-center items-center">
+              <div className="w-[300px] h-[300px] flex justify-between flex-col items-center bg-white rounded-md shadow-md overflow-hidden">
+                <div className="flex justify-between p-3 bg-orange-200 w-full ">
+                  <p className="font-semibold">Party group</p>
+                  <p
+                    onClick={() => setAddGrp(false)}
+                    className="cursor-pointer font-bold rounded-full hover:bg-gray-100"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                  </p>
+                </div>
+                <div className="p-3">
+                  <p>Enter name of new party group</p>
+                  <input
+                    type="text"
+                    className="p-1 border-b-2 border-gray-400"
+                    value={GrpPgInps.val}
+                    onChange={(e) => setGrpPgInps({val:e.target.value})}
+                  />
+                </div>
+                <div className="w-full p-3">
+                  <button
+                    className="bg-blue-400 hover:bg-blue-500 font-semibold w-full text-lg px-3 py-1 rounded-md shadow-md text-white"
+                    onClick={() => GrpPgInps?.val?.length > 0 && AddGrpfn(GrpPgInps.val)}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            )}
+          <div className="flex items-start">
             {
               data.settings?.partyGrouping && (
 
-            <div className="relative">
-              <TextField
+            <div className="flex flex-col">
+              {/* <Autocomplete
+                disablePortal
+                options={data?.groups.map((unit)=> ({label:unit}))}
+                sx={{ width: 250 }}
+                renderInput={(params) => <TextField {...params} label="Groups" />}
+                
+                value={groups.name ? groups.name : ""}
+                onChange={(event, newValue) =>
+                  setGropus({ name: newValue, done: true })
+                }
+              /> */}
+              <Autocomplete
+                disablePortal
+                options={data?.groups.map((unit) => ({ label: unit })) || []}
+                sx={{ width: 220 }}
+                renderInput={(params) => <TextField {...params} label="Groups" />}
+                value={groups.name ? groups.name : ""}
+                onChange={(event, newValue) => setGropus({ name: newValue, done: true })}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    {option.label}
+                  </li>
+                )}
+                ListboxProps={{
+                  component: "div",
+                  children: [
+                    ...(data?.groups.map((unit) => (
+                      <li key={unit} onClick={() => setGropus({ name: unit, done: true })}>
+                        {unit}
+                      </li>
+                    )) || []),
+                    <li key="add-new" style={{ cursor: "pointer", color: "blue" }} onClick={() => console.log("Add new clicked")}>
+                      + Add New
+                    </li>,
+                  ],
+                }}
+              />
+              <p className="font-semibold text-blue-500 flex gap-1 items-center hover:underline" onClick={()=> setAddGrp(true)}><svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 fill-blue-500" viewBox="0 0 512 512"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l82.7 0L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3l0 82.7c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160c0-17.7-14.3-32-32-32L320 0zM80 32C35.8 32 0 67.8 0 112L0 432c0 44.2 35.8 80 80 80l320 0c44.2 0 80-35.8 80-80l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 112c0 8.8-7.2 16-16 16L80 448c-8.8 0-16-7.2-16-16l0-320c0-8.8 7.2-16 16-16l112 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 32z"/></svg> <span>Add New group</span></p>
+              {/* <TextField
                 id="outlined-search"
                 value={groups.name ? groups.name : ""}
                 onChange={(e) =>
@@ -220,15 +325,34 @@ export default function AddParties({ data, setData, change, setChange }) {
                       </li>
                     ))}
                 </ul>
-              )}
+              )} */}
             </div>
               )
             }
-            <select
+
+<FormControl>
+            <InputLabel id="demo-simple-select-label">Under Group</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              // value={age}
+              label="Under Group"
+              sx={{width:220}}
+              // onChange={handleChange}
+            >
+              <MenuItem value="Current Asset">Current Asset</MenuItem>
+              <MenuItem value="Bank Account">Bank Account</MenuItem>
+              <MenuItem value="Cash In Hand">Cash In Hand</MenuItem>
+              <MenuItem value="Deposit">Deposit</MenuItem>
+              <MenuItem value="Loan And Advance">Loan And Advance</MenuItem>
+              <MenuItem value="Stock In Hand">Stock In Hand</MenuItem>
+            </Select>
+            </FormControl>
+            {/* <select
               // onChange={(e) => setGstType}
               name=""
               id=""
-              className="w-full p-2 border-1 border-gray-800"
+              className="w-full p-3 rounded-md border-1 border-gray-800"
             >
               <option disabled selected value="">
                 Under Group
@@ -247,12 +371,29 @@ export default function AddParties({ data, setData, change, setChange }) {
               <option value="Registered Business - Consumer">
                 Stock In Hand
               </option>
-            </select>
-            <select
+            </select> */}
+            <FormControl >
+            <InputLabel id="demo-simple-select-label">Party Category</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              // value={age}
+              label="Party Category"
+              sx={{width:220}}
+              // onChange={handleChange}
+            >
+              <MenuItem value="VIP">VIP</MenuItem>
+              <MenuItem value="Regular">Regular</MenuItem>
+              <MenuItem value="RISK">RISK</MenuItem>
+              <MenuItem value="Lost">Lost</MenuItem>
+            </Select>
+
+      </FormControl>
+            {/* <select
               // onChange={(e) => setGstType}
               name=""
               id=""
-              className="w-full p-2 border-1 border-gray-800"
+              className="w-full p-3 rounded-md  border-1 border-gray-800"
             >
               <option disabled selected value="">
                 Party Category
@@ -261,7 +402,7 @@ export default function AddParties({ data, setData, change, setChange }) {
               <option value="Registered Business - Regular">Regular</option>
               <option value="Registered Business - Consumer">RISK</option>
               <option value="Registered Business - Consumer">Lost</option>
-            </select>
+            </select> */}
           </div>
         </div>
         <div className="c2">
@@ -381,21 +522,16 @@ export default function AddParties({ data, setData, change, setChange }) {
           )}
           {page == "Credit" && (
             <div className="flex flex-col">
-              <div className="div s">
-                <div className="flex">
+              <div className="flex p-5">
+                <div className="flex flex-col">
                   <CustomInput
                     inputValue={OpeningBalance}
                     setInputValue={setOpeningBalance}
                     placeholder={"Opening balance"}
                   />
                   {OpeningBalance && (
-                    // <select name="" id="">
-                    //   <option value="">To Pay</option>
-                    //   <option value="">To Recieve</option>
-                    // </select>
-                    <div className="flex gap-2">
                       <div className="flex gap-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <input
                             autoComplete="off"
                             type="radio"
@@ -405,7 +541,7 @@ export default function AddParties({ data, setData, change, setChange }) {
                           />
                           <span>To Pay</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <input
                             autoComplete="off"
                             type="radio"
@@ -416,15 +552,15 @@ export default function AddParties({ data, setData, change, setChange }) {
                           <span>To Recieve</span>
                         </div>
                       </div>
-                    </div>
                   )}
                 </div>
                 <input
                   type="date"
+                  className="ml-4"
                   onChange={(e) => setAsDate(e.target.value)}
                   id="birthday"
                   name="birthday"
-                ></input>
+                />
               </div>
               <div className="div s">
                 <CustomInput

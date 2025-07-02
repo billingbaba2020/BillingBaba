@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "../components/dropdown";
 import EditParties from "./editParties";
 import SortableTable from "../components/Tables";
+import { Autocomplete, TextField } from "@mui/material";
 
 export default function Parties({ data, setData, change, setChange }) {
   const Navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function Parties({ data, setData, change, setChange }) {
   const [GrpPgInps, setGrpPgInps] = useState({ st: false, val: "" });
   var [inactivePg, setinactivePg] = useState(false);
 
-  const divRef = useRef(null);
+  const divRef = useRef(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -125,14 +126,6 @@ export default function Parties({ data, setData, change, setChange }) {
                     {
                       label: "Delete",
                       action: () => {
-                        // let newDa = {
-                        //   ...data,
-                        //   Transactions: data.Transactions.filter(
-                        //     (_, i) => i !== ele.originalIndex
-                        //   ),
-                        // };
-                        // setData(newDa);
-                        // setChange(!change);
                         console.log("works");
                       },
                     },
@@ -343,7 +336,7 @@ export default function Parties({ data, setData, change, setChange }) {
                     </svg>
                     {impPtDrp && (
                       <button
-                        className="absolute top-[20px] font-semibold left-0 p-2 bg-slate-200 text-black w-[180px] rounded-md shadow-md text-white no-wrap"
+                        className="absolute top-[20px] font-semibold left-0 p-2 bg-slate-200 text-black w-[180px] rounded-md shadow-md hover:bg-gray-300 no-wrap"
                         onClick={() => Navigate("/import-parties")}
                       >
                         Import Parties
@@ -380,7 +373,6 @@ export default function Parties({ data, setData, change, setChange }) {
                           .every((word) =>
                             e.partyName.toLowerCase().includes(word)
                           )
-                      // e.partyName.toLowerCase().includes(SearchQuerry.toLowerCase())
                     )
                     .map((party, index) => (
                       <div
@@ -394,10 +386,10 @@ export default function Parties({ data, setData, change, setChange }) {
                         <div className="">
                           <p
                             className={`${
-                              party.credit
-                                ? party.credit < 0
-                                  ? "textGreen"
-                                  : ""
+                              party.type === "credit"
+                                ? "text-green-600"
+                                : party.type === "debit"
+                                ? "text-red-600"
                                 : ""
                             }`}
                           >
@@ -435,6 +427,65 @@ export default function Parties({ data, setData, change, setChange }) {
                             </svg>
                           </Dropdown>
                         </div>
+                        {/* Toggle Switch */}
+                        <label
+  style={{
+    position: "relative",
+    display: "inline-block",
+    width: "36px",
+    height: "20px",
+    marginLeft: "10px",
+    verticalAlign: "middle"
+  }}
+>
+  <input
+    type="checkbox"
+    checked={party.active ?? true}
+    onChange={(e) => {
+      const newData = { ...data };
+      newData.parties = newData.parties.map((p, i) =>
+        i === index ? { ...p, active: e.target.checked } : p
+      );
+      setData(newData);
+      setChange(!change);
+    }}
+    onClick={e => e.stopPropagation()}
+    style={{
+      opacity: 0,
+      width: 0,
+      height: 0,
+      position: "absolute"
+    }}
+  />
+  <span
+    style={{
+      position: "absolute",
+      cursor: "pointer",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: party.active ?? true ? "#4ade80" : "#ccc",
+      transition: ".4s",
+      borderRadius: "20px"
+    }}
+  >
+    <span
+      style={{
+        position: "absolute",
+        content: '""',
+        height: "16px",
+        width: "16px",
+        left: party.active ?? true ? "18px" : "2px",
+        bottom: "2px",
+        backgroundColor: "white",
+        transition: ".4s",
+        borderRadius: "50%",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.2)"
+      }}
+    />
+  </span>
+</label>
                       </div>
                     ))
                 : data?.parties?.map((party, index) => (
@@ -451,9 +502,11 @@ export default function Parties({ data, setData, change, setChange }) {
                       <div className="">
                         <p
                           className={`${
-                            party.credit
-                              ? party.credit < 0
-                                ? "textGreen"
+                            party.credit !== undefined && party.credit !== null
+                              ? Number(party.credit) > 0
+                                ? "text-green-600"
+                                : Number(party.credit) < 0
+                                ? "text-red-600"
                                 : ""
                               : ""
                           }`}
@@ -488,6 +541,65 @@ export default function Parties({ data, setData, change, setChange }) {
                           </svg>
                         </Dropdown>
                       </div>
+                      {/* Toggle Switch */}
+                      <label
+  style={{
+    position: "relative",
+    display: "inline-block",
+    width: "36px",
+    height: "20px",
+    marginLeft: "10px",
+    verticalAlign: "middle"
+  }}
+>
+  <input
+    type="checkbox"
+    checked={party.active ?? true}
+    onChange={(e) => {
+      const newData = { ...data };
+      newData.parties = newData.parties.map((p, i) =>
+        i === index ? { ...p, active: e.target.checked } : p
+      );
+      setData(newData);
+      setChange(!change);
+    }}
+    onClick={e => e.stopPropagation()}
+    style={{
+      opacity: 0,
+      width: 0,
+      height: 0,
+      position: "absolute"
+    }}
+  />
+  <span
+    style={{
+      position: "absolute",
+      cursor: "pointer",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: party.active ?? true ? "#4ade80" : "#ccc",
+      transition: ".4s",
+      borderRadius: "20px"
+    }}
+  >
+    <span
+      style={{
+        position: "absolute",
+        content: '""',
+        height: "16px",
+        width: "16px",
+        left: party.active ?? true ? "18px" : "2px",
+        bottom: "2px",
+        backgroundColor: "white",
+        transition: ".4s",
+        borderRadius: "50%",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.2)"
+      }}
+    />
+  </span>
+</label>
                     </div>
                   ))}
             </div>
@@ -635,184 +747,6 @@ export default function Parties({ data, setData, change, setChange }) {
                     </button> */}
                   </div>
                 </div>
-                {/* <div className="cl text-sm">
-                  <p>Type</p>
-                  <p>Number</p>
-                  <p>Date</p>
-                  <p>Total</p>
-                  <p>Balance</p>
-                  <p className="side">-</p>
-                </div>
-                {data?.Transactions?.map((item, originalIndex) => ({
-                  ...item,
-                  originalIndex,
-                }))
-                  .filter(
-                    (item) =>
-                      item.name === selectedParty.partyName ||
-                      item.name?.includes(
-                        selectedParty.partyName.toLowerCase()
-                      ) ||
-                      (item.partyName
-                        ?.toLowerCase()
-                        .includes(selectedParty.partyName.toLowerCase()) &&
-                        item.payment_type
-                          ?.toLowerCase()
-                          .includes(TransactionSearc.toLowerCase()))
-                  )
-                  .map((sale, index) => (
-                    <div className="cl text-sm" key={index}>
-                      <p className="grey">{sale.type}</p>
-                      <p className="grey">{sale.invoice_number}</p>
-                      {/* <p className="grey">{sale.name}</p> 
-                      <p className="">{sale.invoice_date}</p>
-                      {/* <p className="grey">{sale.items?.length}</p> 
-                      <p className="grey">{sale.total}</p>
-                      <p className="">
-                        {sale.pending ? sale.pending : sale.total - sale.paid}
-                      </p>
-
-                      <Dropdown
-                        menuItems={
-                          sale.type == "Opening Balance"
-                            ? [
-                                // { label: "View" },
-                                {
-                                  label: "Delete",
-                                  action: () => {
-                                    let newDa = {
-                                      ...data,
-                                      Transactions: data.Transactions.filter(
-                                        (_, i) => i !== sale.originalIndex
-                                      ),
-                                    };
-                                    setData(newDa);
-                                    setChange(!change);
-                                  },
-                                },
-                                { label: "Recieve payment" },
-                              ]
-                            : sale.type == "Sale"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Cancel Invoice" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Preview as delivery chalan" },
-                                { label: "Convert to Return" },
-                                { label: "Recieve Payment" },
-                                { label: "View History" },
-                              ]
-                            : sale.type == "Estimate" ||
-                              sale.type == "Sale Estimation"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Cancel Invoice" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Convert to Sale" },
-                                { label: "Convert to Sale Order" },
-                              ]
-                            : sale.type == "Delivery Chalan"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                                { label: "Convert to Sale" },
-                              ]
-                            : sale.type == "Sale Order"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                                { label: "Convert to Sale" },
-                              ]
-                            : sale.type == "Sale Return" ||
-                              sale.type == "Credit Note"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                                { label: "Make Payment" },
-                                { label: "View History" },
-                              ]
-                            : sale.type == "Purchase"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                                { label: "Convert to Return" },
-                                { label: "Make Payment" },
-                                { label: "View History" },
-                              ]
-                            : sale.type == "Purchase Order"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                                { label: "Convert to Purchase" },
-                              ]
-                            : sale.type == "Purchase Return" ||
-                              sale.type == "Debit Note"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                                { label: "Recieve Payments" },
-                              ]
-                            : sale.type == "Payments Out"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                              ]
-                            : sale.type == "Payments In"
-                            ? [
-                                { label: "View/Edit" },
-                                { label: "Delete" },
-                                { label: "Duplicate" },
-                                { label: "Open PDF" },
-                                { label: "Preview" },
-                                { label: "Print" },
-                              ]
-                            : [{ label: "View/Edit" }, { label: "Delete" }]
-                        }
-                        isLabelOnly={true}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 128 512"
-                        >
-                          <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
-                        </svg>
-                      </Dropdown>
-                    </div>
-                  ))} */}
 
                 <SortableTable data={sendingArray} columns={columns} />
               </div>
@@ -880,7 +814,6 @@ export default function Parties({ data, setData, change, setChange }) {
                         SearchQuerry.toLowerCase()
                           .split(" ")
                           .every((word) => e.toLowerCase().includes(word))
-                      // e.partyName.toLowerCase().includes(SearchQuerry.toLowerCase())
                     )
                     .map((e, index) => (
                       <div
@@ -902,6 +835,30 @@ export default function Parties({ data, setData, change, setChange }) {
                       onClick={() => handlePartySelect(party)}
                     >
                       <h1>{party}</h1>
+                      <Dropdown
+                            menuItems={[
+                              {
+                                label: "Delete",
+                                action: () => {
+                                  let newDa = data;
+                                  newDa.groups = newDa.groups.filter(
+                                    (ele) => ele !== party
+                                  );
+                                  console.log(newDa);
+                                  setData(newDa);
+                                  setChange(!change);
+                                  setSelectedParty();
+                                },
+                              },
+                            ]}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 128 512"
+                            >
+                              <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                            </svg>
+                          </Dropdown>
                     </div>
                   ))}
             </div>
@@ -913,7 +870,7 @@ export default function Parties({ data, setData, change, setChange }) {
                   <p className="font-semibold">Party group</p>
                   <p
                     onClick={() => setGrpPg(0)}
-                    className="cursor-pointer font-bold"
+                    className="cursor-pointer font-bold rounded-full hover:bg-gray-100"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                   </p>
@@ -929,7 +886,7 @@ export default function Parties({ data, setData, change, setChange }) {
                 </div>
                 <div className="w-full p-3">
                   <button
-                    className="bg-blue-400 font-semibold w-full text-lg px-3 py-1 rounded-md shadow-md text-white"
+                    className="bg-blue-400 hover:bg-blue-500 font-semibold w-full text-lg px-3 py-1 rounded-md shadow-md text-white"
                     onClick={() => GrpPgInps?.val?.length > 0 && AddGrp(GrpPgInps.val)}
                   >
                     Add
@@ -948,40 +905,17 @@ export default function Parties({ data, setData, change, setChange }) {
                 </div>
                 <div className="p-3">
                   <p className="p-1 font-semibold">Add Party to Group</p>
-                  <input
-                    type="text"
-                    className="p-1 border border-gray-400 bg-gray-200"
-                    value={GrpPgInps.val}
-                    onChange={(e) =>
-                      setGrpPgInps({ st: false, val: e.target.value })
+                  <Autocomplete
+                                        disablePortal
+                                        options={data?.parties.map((unit)=> ({label:unit.partyName}))}
+                                        sx={{ width: 250 }}
+                                        renderInput={(params) => <TextField {...params} label="Parties" />}
+                                        
+                                        value={GrpPgInps.val}
+                    onChange={(event, newValue) =>
+                      setGrpPgInps({ st: false, val: newValue })
                     }
-                  />
-                  <div className="max-h-[150px] overflow-auto">
-                  {data?.parties
-                    ?.filter(
-                      (e) =>
-                        GrpPgInps?.val
-                          ?.toLowerCase()
-                          .split(" ")
-                          .every((word) =>
-                            e.partyName.toLowerCase().includes(word)
-                          )
-                      // e.partyName.toLowerCase().includes(SearchQuerry.toLowerCase())
-                    )
-                    .map((party, index) => (
-                      <div
-                        className={`tile p-2 border rounded-md border-gray-400 hover:bg-gray-100 my-1 ${
-                          GrpPgInps.val === party.partyName ? "selected" : ""
-                        }`}
-                        key={index}
-                        onClick={() =>
-                          setGrpPgInps({ st: true, val: party.partyName })
-                        }
-                      >
-                        <h1>{party.partyName}</h1>
-                      </div>
-                    ))}
-                  </div>
+                                      />
                 </div>
 
                 <div className="w-full p-3">
@@ -1111,9 +1045,7 @@ const PartyList = ({ data, setData, change, setChange, setClose }) => {
 
     console.log(updatedParties);
 
-    // setData({ ...data, parties: updatedParties });
-    // setChange(!change);
-    // setClose(false)
+
     setSelectedParties([]); // Clear the selection after updating
   };
 

@@ -11,13 +11,13 @@ export default function QuickBilling({
   const Navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   // const [selectedItem, setSelectedItem] = useState(null);
-  const [payment_type, setPaymentType] = useState();
+  // const [payment_type, setPaymentType] = useState();
   const [paid, setPaid] = useState();
   const [selectedCustomer, setSelectedCustomer] = useState({
     name: "",
     done: true,
   });
-  const [totalAmount, setTotalAmount] = useState(0);
+  // const [totalAmount, setTotalAmount] = useState(0);
   const [billingItems, setBillingItems] = useState([]);
   const [CurrentItems, setCurrentItems] = useState(0);
 
@@ -52,44 +52,74 @@ export default function QuickBilling({
 
     if (existingItemIndex !== -1) {
       // Item exists, increment the quantity
-      const updatedBillingItems = billingItems.map((billingItem, index) => {
+      setBillingItems(billingItems.map((billingItem, index) => {
         if (index === existingItemIndex) {
           let qty = parseInt(billingItem.quantity) + 1;
-          let sp = parseInt(billingItem.price_per_unit);
-          let pp = parseInt(billingItem.item_details.purchasePrice);
-          let tp = billingItem.taxPercentage
-            ? parseFloat(billingItem.taxPercentage) / 100
-            : parseFloat(billingItem.Tax) / 100;
-          console.log(qty);
-          console.log(sp);
-          console.log(tp);
-          let tax = sp * tp * qty;
-          let total =
-            (sp - parseInt(billingItem.descount_per_unit)) * qty + tax;
-          let profit = (sp - pp) * qty;
           let row = {
             ...billingItem,
-            profit: profit,
+            profit: parseInt(billingItem.iprofit) * qty,
             quantity: qty,
             descount: parseInt(billingItem.descount_per_unit) * qty,
-            tax: tax,
-            // taxPercentage: billingItem.Tax,
-            total: total.toFixed(2),
+            tax: billingItem.itax  * qty,
+            total: parseInt(billingItem.itotal) * qty,
           };
-          console.log(row);
           return row;
         }
         return billingItem;
-      });
-
-      setBillingItems(updatedBillingItems);
+      }));
     } else {
       // Item does not exist, add it to the array with a quantity of 1
       setBillingItems([...billingItems, { ...item, quantity: 1 }]);
     }
 
-    setTotalAmount(totalAmount + item.total);
+    // setTotalAmount(totalAmount + item.total);
   };
+
+  const handleChangeItemQty = (code, qty) =>{
+    setBillingItems(billingItems.map((billingItem, index) => {
+      if (billingItem.Code === code) {
+        // let qty = parseInt(billingItem.quantity) + 1;
+        let row = {
+          ...billingItem,
+          profit: parseInt(billingItem.iprofit) * qty,
+          quantity: qty,
+          descount: parseInt(billingItem.descount_per_unit) * qty,
+          tax: parseInt(billingItem.itax) * qty,
+          total: parseInt(billingItem.itotal) * qty,
+        };
+        return row;
+        
+      }
+      return billingItem;
+    }));
+  }
+
+  const handleRemoveItem = (code) =>{
+    setBillingItems(billingItems.filter((billingItem, index) => billingItem.Code !== code));
+  }
+
+  const handleIncQty = ()=>{
+    if(billingItems[CurrentItems]){
+      handleChangeItemQty(billingItems[CurrentItems].Code,parseInt(billingItems[CurrentItems].quantity) + 1 )
+      // alert("increased")
+    }else{
+      alert("No Item Selected")
+    }
+  }
+  
+  const handleDecQty =()=>{
+    if(billingItems[CurrentItems]){
+      if(parseInt(billingItems[CurrentItems].quantity)>1){
+        handleChangeItemQty(billingItems[CurrentItems].Code,parseInt(billingItems[CurrentItems].quantity) - 1 )
+      }else{
+        handleRemoveItem(billingItems[CurrentItems].Code)
+      }
+      // alert("Decreased")
+    }else{
+      alert("No Item Selected")
+    }
+  }
+
 
   const SaveBill = () => {
     let billData = {
@@ -307,6 +337,43 @@ export default function QuickBilling({
     }
   }, []);
 
+  // ======================= Shortcuts locha ===================
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const currentLen = billingItems.length; // Get the latest length
+      // if (event.shiftKey && event.key === "r") {
+      if (event.key === "ArrowDown") {
+        if (CurrentItems >= currentLen - 1) {
+          setCurrentItems(0);
+        } else {
+          setCurrentItems((prev) => prev + 1);
+        }
+        // alert(currentLen + " | " + CurrentItems); // Updated length will now be shown
+      }
+      if (event.key === "ArrowUp") {
+        if (CurrentItems <= 0) {
+          setCurrentItems(currentLen - 1);
+        } else {
+          setCurrentItems((prev) => prev - 1);
+        }
+        // alert(currentLen + " | " + CurrentItems); // Updated length will now be shown
+      }
+      if (event.key === "+") {
+        handleIncQty()
+      }
+      if (event.key === "-") {
+        handleDecQty()
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [billingItems, CurrentItems]);
+
+
   return (
     <div id="QuickBilling">
       {/* Left side */}
@@ -336,21 +403,23 @@ export default function QuickBilling({
                           Name: item.Name,
                           item_details: item,
                           // ...item,
+                          itax: (item.Tax / 100) * item.salesPrice,
                           tax: (item.Tax / 100) * item.salesPrice,
                           Code: item.Code,
+                          itotal: item.salesPrice,
                           price_per_unit: item.salesPrice,
                           unit: item.unit?.primary,
-                          taxPercentage: item.taxPercentage
-                            ? item.taxPercentage
-                            : item.Tax,
+                          taxPercentage: item.Tax,
                           descount_per_unit: item.discount,
                           descount: item.discount,
                           quantity: 1,
+                          profit:item.profit,
+                          iprofit:item.profit,
                           total: item.salesPrice,
                         });
                         setSearchTerm("");
                       }}
-                      className="flex w-full justify-between items-center p-2"
+                      className="flex w-full justify-between items-center p-2 hover:bg-gray-100"
                     >
                       <p>
                         {item.Code} - {item.Name}
@@ -400,7 +469,7 @@ export default function QuickBilling({
                     key={index}
                     // className={CurrentItems === index ? "selected" : ""}
                     className={`text-center ${
-                      CurrentItems === index && "border-2 border-blue-400"
+                      CurrentItems === index && "bg-gray-200"
                     }`}
                   >
                     <td className="p-2 text-md text-center border border-gray-300">
@@ -437,28 +506,62 @@ export default function QuickBilling({
           </div>
         </div>
         <div className="b">
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
-            Change Quantity
+          <button className="p-2 m-2 bg-blue-200 text-sm flex flex-col items-center justify-center hover:bg-blue-300 rounded shadow" 
+          onClick={()=>{if(CurrentItems >= (billingItems.length - 1)){
+            setCurrentItems(0)
+          }else{
+            setCurrentItems(CurrentItems+1)
+          }}}
+          >
+            <span>Navigate up</span><span className="text-gray-500 font-semibold">ArrowUp</span> 
           </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
+          <button className="p-2 m-2 bg-blue-200 text-sm flex flex-col items-center justify-center hover:bg-blue-300 rounded shadow"
+            onClick={()=>{if(CurrentItems <= 0){
+              setCurrentItems(billingItems.length - 1)
+            }else{
+              setCurrentItems(CurrentItems-1)
+            }}}
+          >
+            <span>Navigate Down</span><span className="text-gray-500 font-semibold">ArrowDown</span> 
+          </button>
+          <button className="p-2 m-2 bg-blue-200 text-sm flex flex-col items-center justify-center hover:bg-blue-300 rounded shadow"
+            onClick={()=>handleIncQty()}
+          >
+            <span>Increase Quanitity</span><span className="text-gray-500 font-semibold">' + '</span> 
+          </button>
+          <button className="p-2 m-2 bg-blue-200 text-sm flex flex-col items-center justify-center hover:bg-blue-300 rounded shadow"
+            onClick={()=>handleDecQty()}
+          >
+            <span>Decrease Quantity</span><span className="text-gray-500 font-semibold">' - '</span> 
+          </button>
+          {/* <button className="p-2 m-2 bg-blue-200 hover:bg-blue-300 rounded shadow">
+            Change Quantity
+          </button> */}
+          <button className="p-2 m-2 bg-blue-200 text-sm flex flex-col items-center justify-center hover:bg-blue-300 rounded shadow"
+            onClick={()=>{if(billingItems[CurrentItems]){
+              handleRemoveItem(billingItems[CurrentItems].Code)
+          }else{
+            alert("No Item Selected")
+          }}}
+          >
+            <span>Remove Item</span><span className="text-gray-500 font-semibold">' - '</span> 
+          </button>
+          <button className="p-2 m-2 bg-gray-200 hover:bg-blue-300 rounded shadow">
             Item Descount
           </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
-            Remove Item
-          </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
+          <button className="p-2 m-2 bg-gray-200 hover:bg-blue-300 rounded shadow">
             Bill Item
           </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
+          <button className="p-2 m-2 bg-gray-200 hover:bg-blue-300 rounded shadow">
             Additionl changes
           </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
+          <button className="p-2 m-2 bg-gray-200 hover:bg-blue-300 rounded shadow">
             Bill discount
           </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
+          <button className="p-2 m-2 bg-gray-200 hover:bg-blue-300 rounded shadow">
             Loyal points
           </button>
-          <button className="p-2 m-2 bg-blue-100 border border-blue-300 rounded shadow">
+          <button className="p-2 m-2 bg-gray-200 hover:bg-blue-300 rounded shadow">
             Remarks
           </button>
         </div>

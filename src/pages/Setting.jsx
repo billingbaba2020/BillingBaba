@@ -682,14 +682,17 @@ export default function Setting({ data, setData }) {
                   id=""
                 />
                 </div>
-                <button onClick={() => setData({
+                <button onClick={() => {
+                  setData({
                     ...data,
                     settings: {
                       ...data.settings,
                       amountToLoyaltyPt: Lp.lp1, 
                       loyaltyPtToAmount: Lp.Lp2,
                     },
-                  })} className="p-1 px-3 w-full rounded-md bg-orange-500 text-white">
+                  });
+                  setpopup();
+                }} className="p-1 px-3 w-full rounded-md bg-orange-500 text-white">
                   Save Changes
                 </button>
                 <button onClick={() => setpopup()}  className="p-1 px-3 w-full rounded-md bg-gray-500 text-white">Cancel</button>

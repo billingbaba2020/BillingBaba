@@ -5,7 +5,7 @@ import dev_url from "../url";
 import { useNavigate } from "react-router-dom";
 import OnlineStore from "./OnlineStore";
 import CommingSoon from "./commingSoon";
-// import { Link } from "react-router-dom";
+import SalesGraph from "./SalesGraph";
 
 export default function Dashboard({ data, setData }) {
   const Navigate = useNavigate();
@@ -26,13 +26,7 @@ export default function Dashboard({ data, setData }) {
       Navigate("/add-info");
     }
   }, [data]);
-  // useMemo(() => {
-  //   if (data?.todo_list) {
-  //     setTaskStatus(data?.todo_list);
-  //   }
-  //   // console.log('Computing sum...');
-  //   // return a + b;
-  // }, [data]);
+ 
   let uid = data.uid;
   useEffect(() => {
     if (data && Object.keys(taskStatus).length >= 0) {
@@ -66,18 +60,6 @@ export default function Dashboard({ data, setData }) {
         >
           Dashboard
         </button>
-        {/* <button
-          className={page === "overview" ? "selected" : ""}
-          onClick={() => setPage("overview")}
-        >
-          Overview
-        </button>
-        <button
-          className={page === "history" ? "selected" : ""}
-          onClick={() => setPage("history")}
-        >
-          History
-        </button> */}
         <button
           className={page === "search" ? "selected" : ""}
           onClick={() => setPage("search")}
@@ -384,89 +366,9 @@ export default function Dashboard({ data, setData }) {
                 </div>
               </div>
             </div>
-            {/* <div className="tile score">
-              <div className="top">
-                <div className="title">
-                  <svg
-                    width="16"
-                    height="19"
-                    viewBox="0 0 16 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <mask
-                      id="mask0_121_2184"
-                      style={{ maskType: "luminance" }}
-                      maskUnits="userSpaceOnUse"
-                      x="0"
-                      y="0"
-                      width="16"
-                      height="19"
-                    >
-                      <path
-                        d="M14.2537 9.09557V5.45586L10.614 1.41174H2.12132C1.90681 1.41174 1.70108 1.49696 1.5494 1.64864C1.39772 1.80033 1.3125 2.00605 1.3125 2.22057V16.7794C1.3125 16.9939 1.39772 17.1996 1.5494 17.3513C1.70108 17.503 1.90681 17.5882 2.12132 17.5882H6.16544"
-                        stroke="white"
-                        strokeWidth="1.61765"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M11.8271 14.3528C12.7205 14.3528 13.4448 13.6286 13.4448 12.7352C13.4448 11.8418 12.7205 11.1176 11.8271 11.1176C10.9337 11.1176 10.2095 11.8418 10.2095 12.7352C10.2095 13.6286 10.9337 14.3528 11.8271 14.3528Z"
-                        fill="#555555"
-                        stroke="white"
-                        strokeWidth="1.61765"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M15.0624 17.5882C15.0624 16.7302 14.7215 15.9073 14.1148 15.3005C13.5081 14.6938 12.6851 14.3529 11.8271 14.3529C10.969 14.3529 10.1461 14.6938 9.53939 15.3005C8.93266 15.9073 8.5918 16.7302 8.5918 17.5882M10.2094 1.41174V5.45586H14.2536"
-                        stroke="white"
-                        strokeWidth="1.61765"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </mask>
-                    <g mask="url(#mask0_121_2184)">
-                      <path
-                        d="M-2.125 -0.125122H17.2868V19.2866H-2.125V-0.125122Z"
-                        fill="black"
-                      />
-                    </g>
-                  </svg>
-
-                  <h1>Staff Score</h1>
-                </div>
-                <select name="date" id="">
-                  <option value="">Today</option>
-                  <option value="">This Week</option>
-                  <option value="">This Month</option>
-                </select>
-              </div>
-              <div className="mid">
-                <div className="tile">
-                  <p>{"Pratham"}</p>
-                  <p>({"10"})</p>
-                </div>
-                <div className="tile">
-                  <p>{"Sameer"}</p>
-                  <p>({"Absent"})</p>
-                </div>
-                <div className="tile">
-                  <p>{"Shubham"}</p>
-                  <p>({"17"})</p>
-                </div>
-                <div className="tile">
-                  <p>{"Vikas"}</p>
-                  <p>({"5"})</p>
-                </div>
-                <div className="profile hover:fill-gray-500"  onClick={() => Navigate("/items")}>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z" />
-                  </svg>
-                </div>
-              </div>
-            </div> */}
           </div>
+          <SalesGraph transactions={data.Transactions} />
+
           </div>
           <div className="right">
             <div className="list">
@@ -476,7 +378,7 @@ export default function Dashboard({ data, setData }) {
               </div>
             </div>
             <div className="list">
-              
+
               <div className="title">
                 <h1>To Do List</h1>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

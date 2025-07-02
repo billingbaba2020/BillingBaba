@@ -130,7 +130,7 @@ export default function Profile({ data, setData }) {
         </button>
         <button
           className={`py-1 px-3 text-md font-semibold hover:bg-gray-300 border-red-500  ${page === 4 && "border-b-2"} `}
-          disabled
+          onClick={() => setPage(4)}
         >
           My Staff
         </button>
@@ -257,22 +257,8 @@ export default function Profile({ data, setData }) {
               )}
             </div>
             </div>
-            <div className="flex space-x-4 mb-4">
-              <button
-                onClick={() => setGstType("withGST")}
-                className={`flex-1 p-2 rounded-md ${gstType === "withGST" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"}`}
-              >
-                With GST
-              </button>
-              <button
-                onClick={() => setGstType("nonGST")}
-                className={`flex-1 p-2 rounded-md ${gstType === "nonGST" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"}`}
-              >
-                Non-GST
-              </button>
-            </div>
 
-            {gstType === "withGST" && (
+            { (
               <div>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-semibold">
@@ -906,7 +892,7 @@ export default function Profile({ data, setData }) {
                 onClick={() => setGstType("withGST")}
                 className={`flex-1 p-2 rounded-md ${gstType === "withGST" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-600"}`}
               >
-                With GST
+                Your Profile
               </button>
               <button
                 onClick={() => setGstType("nonGST")}
@@ -1445,6 +1431,99 @@ export default function Profile({ data, setData }) {
             <div className="w-full flex justify-center items-center">
               <span>Billing tab is unavailable for beta</span>
             </div>
+          </div>
+        )}
+        {page === 4 && (
+          <div className="w-full mt-1 mx-auto p-6 bg-white rounded-md">
+            {/* Summary Cards */}
+            <div className="flex flex-wrap gap-4 mb-6 justify-between">
+              <div className="flex-1 min-w-[150px] bg-blue-100 rounded-lg p-4 flex flex-col items-center">
+                <span className="text-gray-600 font-semibold">Paid</span>
+                <span className="text-2xl font-bold text-blue-700">₹ 0.00</span>
+              </div>
+              <div className="flex-1 min-w-[150px] bg-red-100 rounded-lg p-4 flex flex-col items-center">
+                <span className="text-gray-600 font-semibold">Unpaid</span>
+                <span className="text-2xl font-bold text-red-700">₹ 0.00</span>
+              </div>
+              <div className="flex-1 min-w-[150px] bg-orange-100 rounded-lg p-4 flex flex-col items-center">
+                <span className="text-gray-600 font-semibold">Overdue</span>
+                <span className="text-2xl font-bold text-orange-700">₹ 0.00</span>
+              </div>
+              <div className="flex-1 min-w-[150px] bg-yellow-100 rounded-lg p-4 flex flex-col items-center">
+                <span className="text-gray-600 font-semibold">Total</span>
+                <span className="text-2xl font-bold text-yellow-700">₹ 0.00</span>
+              </div>
+            </div>
+            {/* Controls */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex gap-2">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded-md font-semibold" onClick={() => setShowPopup('attendance')}>MARK ATTENDANCE</button>
+                <input type="text" placeholder="Search name" className="border border-gray-300 rounded-md px-3 py-2" />
+              </div>
+              <button className="bg-green-500 text-white px-4 py-2 rounded-md font-semibold" onClick={() => setShowPopup('addStaff')}>Add Staff</button>
+            </div>
+            {/* Staff Table */}
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr className="bg-gray-100 text-gray-700">
+                    <th className="py-2 px-4">Name</th>
+                    <th className="py-2 px-4">Joining Date</th>
+                    <th className="py-2 px-4">Present</th>
+                    <th className="py-2 px-4">Absent</th>
+                    <th className="py-2 px-4">Advance Salary</th>
+                    <th className="py-2 px-4">Salary</th>
+                    <th className="py-2 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Example row, replace with dynamic data */}
+                  <tr className="border-b">
+                    <td className="py-2 px-4">XYZ</td>
+                    <td className="py-2 px-4">14/11/23</td>
+                    <td className="py-2 px-4">20</td>
+                    <td className="py-2 px-4">5</td>
+                    <td className="py-2 px-4">2000</td>
+                    <td className="py-2 px-4">10000</td>
+                    <td className="py-2 px-4 flex gap-2">
+                      <button className="text-blue-500 hover:underline">Edit</button>
+                      <button className="text-red-500 hover:underline">Delete</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 px-4">ABC</td>
+                    <td className="py-2 px-4">12/11/23</td>
+                    <td className="py-2 px-4">15</td>
+                    <td className="py-2 px-4">9</td>
+                    <td className="py-2 px-4">100</td>
+                    <td className="py-2 px-4">9000</td>
+                    <td className="py-2 px-4 flex gap-2">
+                      <button className="text-blue-500 hover:underline">Edit</button>
+                      <button className="text-red-500 hover:underline">Delete</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            {/* Attendance/Staff Modal (placeholder) */}
+            {showPopup === 'attendance' && (
+              <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                  <h2 className="text-lg font-bold mb-4">Mark Attendance</h2>
+                  <p className="mb-4">(Attendance marking UI goes here)</p>
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Close</button>
+                </div>
+              </div>
+            )}
+            {showPopup === 'addStaff' && (
+              <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                  <h2 className="text-lg font-bold mb-4">Add Staff</h2>
+                  <p className="mb-4">(Add staff form goes here)</p>
+                  <button className="bg-green-500 text-white px-4 py-2 rounded-md" onClick={() => setShowPopup(false)}>Close</button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

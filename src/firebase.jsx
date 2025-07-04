@@ -42,25 +42,28 @@ import {
 //   appId: "1:796452404504:web:0317ee0856c3f3be35726d"
 // };
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCgUkIrYWU4MbAp89BkmeZm4C6dDT96T_M",
+  authDomain: "billing-baba.firebaseapp.com",
+  projectId: "billing-baba",
+  storageBucket: "billing-baba.appspot.com",
+  messagingSenderId: "893186141142",
+  appId: "1:893186141142:web:e1a74ab8f26d22f48ad277",
+  measurementId: "G-WP7KYER515"
+};
+
 // const firebaseConfig = {
-//   apiKey: "AIzaSyCgUkIrYWU4MbAp89BkmeZm4C6dDT96T_M",
-//   authDomain: "billing-baba.firebaseapp.com",
-//   projectId: "billing-baba",
-//   storageBucket: "billing-baba.appspot.com",
-//   messagingSenderId: "893186141142",
-//   appId: "1:893186141142:web:e1a74ab8f26d22f48ad277",
-//   measurementId: "G-WP7KYER515"
+//   apiKey: "AIzaSyDbrOiC-tWqiWkddI4GC9tsS0Zb-23Iizk",
+//   authDomain: "billing-baba-2.firebaseapp.com",
+//   projectId: "billing-baba-2",
+//   storageBucket: "billing-baba-2.firebasestorage.app",
+//   messagingSenderId: "977924179394",
+//   appId: "1:977924179394:web:e738e89c6dc7089317c25b",
+//   measurementId: "G-VPE0S3K350"
 // };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDbrOiC-tWqiWkddI4GC9tsS0Zb-23Iizk",
-  authDomain: "billing-baba-2.firebaseapp.com",
-  projectId: "billing-baba-2",
-  storageBucket: "billing-baba-2.firebasestorage.app",
-  messagingSenderId: "977924179394",
-  appId: "1:977924179394:web:e738e89c6dc7089317c25b",
-  measurementId: "G-VPE0S3K350"
-};
+
+
 const app = initializeApp(firebaseConfig);
 const registerWithPhoneAndPassword = async (phoneNumber, password, containerId) => {
   const confirmationResult = await signInWithPhoneNum(phoneNumber, containerId);

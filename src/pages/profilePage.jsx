@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { logout, saveUidToLocalStorage } from "../firebase";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ImageUploader from "../components/ImgUpload";
-import { data } from "autoprefixer";
+import axios from "axios";
+import { logout, saveUidToLocalStorage } from "../firebase";
+import ImageUploader from "../components/ImgUpload"; // optional, if you're using logo/sign upload
 
 export default function Profile({ data, setData }) {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+  const API_KEY = "b7223bb60e21df9064fb51f08b9567ec";
 
   const [ProfileDat, setProfileDat] = useState({
     BusinessName: data.BusinessName,
@@ -22,71 +23,156 @@ export default function Profile({ data, setData }) {
   });
 
   const [gstType, setGstType] = useState("withGST");
-
   const [page, setPage] = useState(0);
-
-  var [Logo, setLogo] = useState();
-  var [Signature, setSignature] = useState();
+  const [Logo, setLogo] = useState();
+  const [Signature, setSignature] = useState();
   const [showPopup, setShowPopup] = useState(false);
 
-  const handleUploadProfileImage = (url) => {
-    setLogo(url);
-  };
+  const handleUploadProfileImage = (url) => setLogo(url);
+  const handleUploadSign = (url) => setSignature(url);
 
-  const handleUploadSign = (url) => {
-    setSignature(url);
-  };
+  const fetchGSTINDetails = async (gstin) => {
+    try {
+      const response = await axios.get(
+        `https://gst-number.com/api/${API_KEY}/gst/${gstin}`
+      );
+      if (response.data.status === "success") {
+        const d = response.data.data;
 
-  //useEffect(()=>{
-  //setTimeout(() => {
-  ///setData({ ...data, Companies: null });
-  //}, 3000);
-  //setData({ ...data, Companies: null});
-  //},[])
+        const pin = (d.address || "").match(/\b\d{6}\b/)?.[0] || "";
+        const cityGuess =
+          (d.address || "").split(",").slice(-2, -1)[0]?.trim() || "";
+
+        setProfileDat((prev) => ({
+          ...prev,
+          BusinessName: d.legalName || prev.BusinessName,
+          address: d.address || prev.address,
+          State: d.state || prev.State,
+          pincode: pin,
+          City: cityGuess,
+        }));
+      } else {
+        alert(response.data.message || "Failed to fetch GST details");
+      }
+    } catch (err) {
+      console.error("GST fetch error", err);
+      alert("Error fetching GST details.");
+    }
+  };
 
   const createnewCompany = (Company) => {
-    if (data.Companies) {
-      if (data.Companies.length > 0) {
-        let lastIndex =
-          data.Companies[data.Companies.length - 1].currentCompanyIndex;
-        let newCompany = {
-          ...Company,
-          // ...etc,
-          currentCompanyIndex: lastIndex + 1,
-        };
-        setData({ ...data, Companies: [...data.Companies, newCompany] });
-      }
+    if (data.Companies && data.Companies.length > 0) {
+      let lastIndex = data.Companies[data.Companies.length - 1].currentCompanyIndex;
+      let newCompany = { ...Company, currentCompanyIndex: lastIndex + 1 };
+      setData({ ...data, Companies: [...data.Companies, newCompany] });
     } else {
-      console.log(data);
-      // console.log(data.filter((key, value) => key !== "Companies"))
-      let lastComapnydat = { ...data };
-      delete lastComapnydat.Companies;
-      let currentCompany = {
-        ...lastComapnydat,
-        currentCompanyIndex: 0,
-      };
-
-      let newCompany = {
-        ...Company,
-        // ...etc,
-        currentCompanyIndex: 1,
-      };
+      let lastCompanyData = { ...data };
+      delete lastCompanyData.Companies;
+      let currentCompany = { ...lastCompanyData, currentCompanyIndex: 0 };
+      let newCompany = { ...Company, currentCompanyIndex: 1 };
       setData({ ...data, Companies: [currentCompany, newCompany] });
     }
   };
 
   const changeCompany = (index) => {
-    let tempData = { ...data };
-    let currentCompanyDat = data.filter((key, value) => key !== "Companies");
-    data.Companies[data.currentCompanyIndex ? data.currentCompanyIndex : 0] =
-      currentCompanyDat;
-    tempData = { ...tempData, ...tempData.Companies[index] };
-    console.log(tempData);
+    let currentCompanyData = Object.fromEntries(
+      Object.entries(data).filter(([key]) => key !== "Companies")
+    );
+    data.Companies[data.currentCompanyIndex ?? 0] = currentCompanyData;
+    const selected = data.Companies[index];
+    setData({ ...selected, Companies: data.Companies });
   };
 
+  // OPTIONAL: Auto-fill on first mount if GSTIN is present
+  useEffect(() => {
+    if (ProfileDat.GSTIN) {
+      fetchGSTINDetails(ProfileDat.GSTIN);
+    }
+  }, []);
+
+  const Navigate = useNavigate();
+
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div className="flex w-full justify-evenly gap-2 bg-[#f9f8f2]">
+    <>
+      <div className="p-4">
+        <h1 className="text-xl font-bold mb-4">Profile</h1>
+
+        <div className="mb-4">
+          <label className="block font-medium">GSTIN</label>
+          <input
+            type="text"
+            value={ProfileDat.GSTIN}
+            readOnly
+            className="w-full border px-3 py-2 bg-gray-100 text-gray-500 rounded"
+          />
+          <button
+            onClick={() => fetchGSTINDetails(ProfileDat.GSTIN)}
+            className="mt-2 bg-blue-500 text-white px-3 py-1 text-sm rounded hover:bg-blue-600"
+          >
+            Auto-Fill from GSTIN
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block">Business Name</label>
+            <input
+              type="text"
+              value={ProfileDat.BusinessName}
+              onChange={(e) =>
+                setProfileDat({ ...ProfileDat, BusinessName: e.target.value })
+              }
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+          <div>
+            <label className="block">City</label>
+            <input
+              type="text"
+              value={ProfileDat.City}
+              onChange={(e) =>
+                setProfileDat({ ...ProfileDat, City: e.target.value })
+              }
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+          <div>
+            <label className="block">State</label>
+            <input
+              type="text"
+              value={ProfileDat.State}
+              onChange={(e) =>
+                setProfileDat({ ...ProfileDat, State: e.target.value })
+              }
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+          <div>
+            <label className="block">Pincode</label>
+            <input
+              type="text"
+              value={ProfileDat.pincode}
+              onChange={(e) =>
+                setProfileDat({ ...ProfileDat, pincode: e.target.value })
+              }
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block">Address</label>
+            <input
+              type="text"
+              value={ProfileDat.address}
+              onChange={(e) =>
+                setProfileDat({ ...ProfileDat, address: e.target.value })
+              }
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="w-full h-full flex flex-col items-center">
+        <div className="flex w-full justify-evenly gap-2 bg-[#f9f8f2]">
         <button
           className={`py-1 px-3 text-md font-semibold hover:bg-gray-300 border-red-500 ${page === 0 && "border-b-2"} `}
           onClick={() => {
@@ -270,6 +356,13 @@ export default function Profile({ data, setData }) {
                     readOnly
                     className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
                   />
+                  <button
+                    type="button"
+                    className="mt-2 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                    onClick={() => fetchGSTINDetails(ProfileDat.GSTIN)}
+                  >
+                    Auto-fill from GSTIN
+                  </button>
                   <p className="text-sm text-gray-500">
                     Enter your 15 digit GSTIN number
                   </p>
@@ -1528,5 +1621,6 @@ export default function Profile({ data, setData }) {
         )}
       </div>
     </div>
+    </>
   );
 }

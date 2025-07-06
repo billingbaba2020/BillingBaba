@@ -1,5 +1,5 @@
 // const devUrl1 = "https://bilingbaba-backend.onrender.com/";
-const devUrl1 = "https://api-bilingbaba.onrender.com/";
+const devUrl1 = "https://api-bilingbaba.onrender.com";
 // const devUrl1 = "https://psychic-dollop-p9gr5v9xrqx2994g-9000.app.github.dev";
 const devUrl2 = "http://127.0.0.1:9000/";
 
@@ -21,3 +21,4 @@ async function getDevUrl() {
 const dev_url = await getDevUrl();
 
 export default dev_url;
+

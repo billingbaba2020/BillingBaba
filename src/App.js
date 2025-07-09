@@ -311,7 +311,7 @@ function App() {
             }
           />
           <Route
-            path="/"
+            path="/dashboard"
             exact
             element={
               <Home part="dashboard" data={data} setData={setData}>

@@ -22,24 +22,49 @@ export default function LogIn({ sw = false }) {
   const [password, setPassword] = useState("");
 
   const history = useNavigate();
-  const signup = () => {
-    let res = registerWithEmailAndPassword(email, password, name);
-    console.log(res);
-    // alert(res);
-    saveUidToLocalStorage(res);
-    setSwitch("login");
-    history("/");
+  const login = async () => {
+    try {
+      const res = await logInWithEmailAndPassword(email, password);
+      console.log("Login success:", res);
+      saveUidToLocalStorage(res.data.uid);
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Login failed:", err.message);
+      alert("Login failed: " + err.message);
+    }
   };
 
-  const login = () => {
-    let res = logInWithEmailAndPassword(email, password);
-    console.log(res);
-    // alert(res);
-    saveUidToLocalStorage(res.data);
-    // history("/");
-    window.location.href = "/";
-    setSwitch("signup");
-  };
+const signup = async () => {
+  // Basic validation
+  if (!email || !password || !name) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  // Basic email format check
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("Password must be at least 6 characters.");
+    return;
+  }
+
+  try {
+    const res = await registerWithEmailAndPassword(email, password, name);
+    console.log("Signup success:", res);
+    saveUidToLocalStorage(res.data.uid);
+    setSwitch("login");
+    history("/");
+  } catch (err) {
+    console.error("Signup failed:", err.message);
+    alert("Signup failed: " + err.message);
+  }
+};
+
 
   let [otpToggle, setotpToggle] = useState(false);
   let [otp, setOtp] = useState("");

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomInput from "../components/customInput";
 import { useNavigate } from "react-router-dom";
 import dev_url from "../url";
 import Loader from "./Loader";
 
 export default function AddInfo({ data, setData, uid = null }) {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -78,7 +78,7 @@ export default function AddInfo({ data, setData, uid = null }) {
         console.log("addInfo: ", data);
         setLoading(false);
         alert("done");
-        Navigate("/");
+        navigate("", {replace: true}); // Navigate to home page after saving
       })
       .catch((error) => {
         setLoading(false);
@@ -86,7 +86,12 @@ export default function AddInfo({ data, setData, uid = null }) {
       });
   };
 
-  if (data.name) Navigate("/");
+  useEffect(() => {
+    if (data && data.name) {
+      navigate("/");
+    }
+  }, [data, navigate]);
+
   if (Loading) return <Loader />;
   return (
     <div id="info">

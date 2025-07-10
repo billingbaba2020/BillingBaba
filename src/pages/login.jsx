@@ -58,7 +58,7 @@ const signup = async () => {
     console.log("Signup success:", res);
     saveUidToLocalStorage(res.data.uid);
     setSwitch("login");
-    history("/");
+    history("/add-info"); // <-- Change this line to navigate to /add-info
   } catch (err) {
     console.error("Signup failed:", err.message);
     alert("Signup failed: " + err.message);

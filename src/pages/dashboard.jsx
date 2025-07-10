@@ -28,6 +28,7 @@ import OnlineStore from "./OnlineStore";
 import CommingSoon from "./commingSoon";
 import SalesGraph from "./SalesGraph";
 import dev_url from "../url";
+
 export default function Dashboard({ data, setData }) {
   const navigate = useNavigate();
   const [page, setPage] = useState("dashboard");
@@ -117,22 +118,22 @@ export default function Dashboard({ data, setData }) {
               Privacy Mode
               <button
                 onClick={() => setPrivacyMode(!privacyMode)}
-                className="border-red-200 text-red-600 hover:bg-red-50"
+                className="border-red-200 text-red-600 hover:bg-red-50 px-3 py-1 rounded border flex items-center space-x-1"
               >
                 {privacyMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                Turn {privacyMode ? "Off" : "On"}
+                <span>Turn {privacyMode ? "Off" : "On"}</span>
               </button>
             </h3>
           </div>
-          <div>
+          <div className="py-8">
             {privacyMode ? (
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
                 <EyeOff className="w-16 h-16 text-gray-400 mx-auto" />
                 <h2 className="text-2xl font-semibold text-gray-800">Privacy Mode Enabled</h2>
                 <p className="text-gray-600">Disable to view your dashboard</p>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
                 <Eye className="w-16 h-16 text-gray-400 mx-auto" />
                 <h2 className="text-2xl font-semibold text-gray-800">Privacy Mode Disabled</h2>
                 <p className="text-gray-600">Enable to hide your dashboard</p>
@@ -148,19 +149,19 @@ export default function Dashboard({ data, setData }) {
             <h3 className="text-lg">Follow Us</h3>
           </div>
           <div className="flex space-x-3">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-50 rounded">
               <Facebook className="w-4 h-4 text-blue-600" />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2">
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-50 rounded">
               <Linkedin className="w-4 h-4 text-blue-700" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-50 rounded">
               <Twitter className="w-4 h-4 text-sky-500" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-50 rounded">
               <Instagram className="w-4 h-4 text-pink-600" />
             </a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="p-2">
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-50 rounded">
               <Youtube className="w-4 h-4 text-red-600" />
             </a>
           </div>
@@ -179,7 +180,7 @@ export default function Dashboard({ data, setData }) {
           <p className="text-gray-600">Disable to view your dashboard</p>
           <button
             onClick={() => setPrivacyMode(false)}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
           >
             Disable Privacy Mode
           </button>
@@ -192,139 +193,192 @@ export default function Dashboard({ data, setData }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Topbar Navigation */}
-      <div className="topbar flex gap-2 px-4 py-2 bg-white border-b mb-2">
-        <button
-          className={page === "dashboard" ? "selected font-semibold text-blue-600 underline" : ""}
-          onClick={() => setPage("dashboard")}
-        >
-          Dashboard
-        </button>
-        {/* 
-        <button
-          className={page === "overview" ? "selected" : ""}
-          onClick={() => setPage("overview")}
-        >
-          Overview
-        </button>
-        <button
-          className={page === "history" ? "selected" : ""}
-          onClick={() => setPage("history")}
-        >
-          History
-        </button>
-        */}
-        <button
-          className={page === "search" ? "selected font-semibold text-blue-600 underline" : ""}
-          onClick={() => setPage("search")}
-        >
-          Search Product Online
-        </button>
-        <button
-          className={page === "store" ? "selected font-semibold text-blue-600 underline" : ""}
-          onClick={() => setPage("store")}
-        >
-          My online store
-        </button>
+      <div className="bg-white border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-6 py-4">
+            <button
+              className={`text-sm font-medium transition-colors ${
+                page === "dashboard" 
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600 pb-1" 
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+              onClick={() => setPage("dashboard")}
+            >
+              Dashboard
+            </button>
+            <button
+              className={`text-sm font-medium transition-colors ${
+                page === "search" 
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600 pb-1" 
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+              onClick={() => setPage("search")}
+            >
+              Search Product Online
+            </button>
+            <button
+              className={`text-sm font-medium transition-colors ${
+                page === "store" 
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600 pb-1" 
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+              onClick={() => setPage("store")}
+            >
+              My online store
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Only show dashboard content if page === "dashboard" */}
       {page === "dashboard" && (
         <>
-          {/* Dashboard Header and Content */}
-          <div className="bg-white shadow-sm border-b py-3 px-4 flex items-center justify-between">
-            <div className="flex items-center w-full max-w-md">
-              <Search className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                type="text"
-                placeholder="Search Transactions"
-                className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-100"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
+          {/* Search Bar Section */}
+          <div className="bg-white border-b shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex items-center w-full max-w-md">
+                <Search className="w-5 h-5 text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Search Transactions"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Top Cards */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {/* Main Content Container */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            {/* Top Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Total Receivable */}
-              <div className="bg-white p-5 rounded-lg shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">Total Receivable</p>
-                    <p className="text-2xl font-bold text-gray-900">₹ {toCollect.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400 mt-1">You don't have any receivables as of now.</p>
+                    <p className="text-sm font-medium text-gray-500">Total Receivable</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">₹ {toCollect.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-2">You don't have any receivables as of now.</p>
                   </div>
-                  <ArrowDown className="w-6 h-6 text-green-500 bg-green-100 rounded-full p-1" />
+                  <div className="flex-shrink-0">
+                    <ArrowDown className="w-6 h-6 text-green-500 bg-green-100 rounded-full p-1" />
+                  </div>
                 </div>
               </div>
+
               {/* Total Payable */}
-              <div className="bg-white p-5 rounded-lg shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">Total Payable</p>
-                    <p className="text-2xl font-bold text-gray-900">₹ {toPay.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-sm font-medium text-gray-500">Total Payable</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">₹ {toPay.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-2">
                       From {data?.purchase?.filter((obj) => obj.payment_type === "credit").length || 0} Party
                     </p>
                   </div>
-                  <ArrowUp className="w-6 h-6 text-red-500 bg-red-100 rounded-full p-1" />
+                  <div className="flex-shrink-0">
+                    <ArrowUp className="w-6 h-6 text-red-500 bg-red-100 rounded-full p-1" />
+                  </div>
                 </div>
               </div>
+
               {/* Stock Value */}
-              <div className="bg-white p-5 rounded-lg shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">Stock Value</p>
-                    <p className="text-2xl font-bold text-gray-900">₹ {stockValue.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400 mt-1">As of Now</p>
+                    <p className="text-sm font-medium text-gray-500">Stock Value</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">₹ {stockValue.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-2">As of Now</p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Package className="w-6 h-6 text-blue-500 bg-blue-100 rounded-full p-1" />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Sales Graph Section */}
-            <div className="bg-white p-5 rounded-lg shadow-md mb-6">
-              <div className="flex flex-row items-center justify-between pb-2">
-                <h3 className="text-lg font-semibold">Total Sale</h3>
-                <select defaultValue="month" className="w-32 border-blue-200 focus:border-blue-500">
-                  <option value="today">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="custom">Custom</option>
-                </select>
-              </div>
-              <div className="h-56 flex flex-col justify-center items-center">
-                <p className="text-2xl font-bold text-gray-900 mb-2">₹ {salesAmount.toLocaleString()}</p>
-                <div className="w-full h-32 bg-gray-100 rounded flex items-end">
-                  {/* Placeholder for graph */}
-                  <div className="w-full text-center text-gray-400">
-                    <SalesGraph transactions={data.Transactions} />
-                  </div>
-                </div>
-              </div>
+            {/* Add padding below Stock Value card */}
+
+
+            <div className="h-48 bg-gray-50 rounded-lg flex items-center justify-center mb-6">
+                <SalesGraph transactions={data.Transactions} />
             </div>
+                      <div className="pb-6"></div>
 
             {/* Most Used Reports */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex space-x-3 overflow-x-auto">
-                <button className="whitespace-nowrap">Sale Report</button>
-                <button className="whitespace-nowrap">All Transactions</button>
-                <button className="whitespace-nowrap">Daybook Report</button>
-                <button className="whitespace-nowrap">Party Statement</button>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Most Used Reports</h3>
+                <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                  View All
+                </button>
               </div>
-              <button className="text-blue-600">View All</button>
+              <div className="flex flex-wrap gap-3">
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
+                  Sale Report
+                </button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
+                  All Transactions
+                </button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
+                  Daybook Report
+                </button>
+                <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
+                  Party Statement
+                </button>
+              </div>
             </div>
 
-            {/* Tabs for extra widgets */}
-            <div className="w-full">
-              <div className="flex space-x-2 mb-4">
-                <button value="todo" onClick={() => setActiveTab("todo")} className={`px-4 py-2 rounded-md ${activeTab === "todo" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>To Do List</button>
-                <button value="lowstock" onClick={() => setActiveTab("lowstock")} className={`px-4 py-2 rounded-md ${activeTab === "lowstock" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Low Stock</button>
-                <button value="privacy" onClick={() => setActiveTab("privacy")} className={`px-4 py-2 rounded-md ${activeTab === "privacy" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Privacy</button>
-                <button value="social" onClick={() => setActiveTab("social")} className={`px-4 py-2 rounded-md ${activeTab === "social" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Follow Us</button>
+            {/* Tabs Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="border-b border-gray-200">
+                <div className="flex space-x-1 p-1">
+                  <button 
+                    onClick={() => setActiveTab("todo")} 
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === "todo" 
+                        ? "bg-blue-100 text-blue-700 font-semibold" 
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    To Do List
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab("lowstock")} 
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === "lowstock" 
+                        ? "bg-blue-100 text-blue-700 font-semibold" 
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Low Stock
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab("privacy")} 
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === "privacy" 
+                        ? "bg-blue-100 text-blue-700 font-semibold" 
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Privacy
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab("social")} 
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      activeTab === "social" 
+                        ? "bg-blue-100 text-blue-700 font-semibold" 
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Follow Us
+                  </button>
+                </div>
               </div>
-              <div className="bg-white p-5 rounded-lg shadow-md">{renderTab()}</div>
+              <div className="p-6">
+                {renderTab()}
+              </div>
             </div>
           </div>
         </>

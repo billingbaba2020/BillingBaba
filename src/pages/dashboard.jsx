@@ -226,6 +226,17 @@ export default function Dashboard({ data, setData }) {
             >
               My online store
             </button>
+                        <button
+              className={`text-sm font-medium transition-colors ${
+                page === "search" 
+                  ? "text-blue-600 font-semibold border-b-2 border-blue-600 pb-1" 
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+              onClick={() => setPage("search")}
+            >
+              Messages
+            </button>
+
           </div>
         </div>
       </div>

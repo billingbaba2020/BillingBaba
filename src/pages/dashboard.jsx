@@ -28,7 +28,6 @@ import OnlineStore from "./OnlineStore";
 import CommingSoon from "./commingSoon";
 import SalesGraph from "./SalesGraph";
 import dev_url from "../url";
-
 export default function Dashboard({ data, setData }) {
   const navigate = useNavigate();
   const [page, setPage] = useState("dashboard");
@@ -192,103 +191,144 @@ export default function Dashboard({ data, setData }) {
   // Main dashboard
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b py-3 px-4 flex items-center justify-between">
-        <div className="flex items-center w-full max-w-md">
-          <Search className="w-5 h-5 text-gray-400 mr-2" />
-          <input
-            type="text"
-            placeholder="Search Transactions"
-            className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-100"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
+      {/* Topbar Navigation */}
+      <div className="topbar flex gap-2 px-4 py-2 bg-white border-b mb-2">
+        <button
+          className={page === "dashboard" ? "selected font-semibold text-blue-600 underline" : ""}
+          onClick={() => setPage("dashboard")}
+        >
+          Dashboard
+        </button>
+        {/* 
+        <button
+          className={page === "overview" ? "selected" : ""}
+          onClick={() => setPage("overview")}
+        >
+          Overview
+        </button>
+        <button
+          className={page === "history" ? "selected" : ""}
+          onClick={() => setPage("history")}
+        >
+          History
+        </button>
+        */}
+        <button
+          className={page === "search" ? "selected font-semibold text-blue-600 underline" : ""}
+          onClick={() => setPage("search")}
+        >
+          Search Product Online
+        </button>
+        <button
+          className={page === "store" ? "selected font-semibold text-blue-600 underline" : ""}
+          onClick={() => setPage("store")}
+        >
+          My online store
+        </button>
       </div>
 
-      {/* Top Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {/* Total Receivable */}
-          <div className="bg-white p-5 rounded-lg shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Total Receivable</p>
-                <p className="text-2xl font-bold text-gray-900">₹ {toCollect.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-1">You don't have any receivables as of now.</p>
-              </div>
-              <ArrowDown className="w-6 h-6 text-green-500 bg-green-100 rounded-full p-1" />
+      {/* Only show dashboard content if page === "dashboard" */}
+      {page === "dashboard" && (
+        <>
+          {/* Dashboard Header and Content */}
+          <div className="bg-white shadow-sm border-b py-3 px-4 flex items-center justify-between">
+            <div className="flex items-center w-full max-w-md">
+              <Search className="w-5 h-5 text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search Transactions"
+                className="w-full px-3 py-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-100"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
             </div>
           </div>
-          {/* Total Payable */}
-          <div className="bg-white p-5 rounded-lg shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Total Payable</p>
-                <p className="text-2xl font-bold text-gray-900">₹ {toPay.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  From {data?.purchase?.filter((obj) => obj.payment_type === "credit").length || 0} Party
-                </p>
-              </div>
-              <ArrowUp className="w-6 h-6 text-red-500 bg-red-100 rounded-full p-1" />
-            </div>
-          </div>
-          {/* Stock Value */}
-          <div className="bg-white p-5 rounded-lg shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Stock Value</p>
-                <p className="text-2xl font-bold text-gray-900">₹ {stockValue.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-1">As of Now</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Sales Graph Section */}
-        <div className="bg-white p-5 rounded-lg shadow-md mb-6">
-          <div className="flex flex-row items-center justify-between pb-2">
-            <h3 className="text-lg font-semibold">Total Sale</h3>
-            <select defaultValue="month" className="w-32 border-blue-200 focus:border-blue-500">
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-          <div className="h-56 flex flex-col justify-center items-center">
-            <p className="text-2xl font-bold text-gray-900 mb-2">₹ {salesAmount.toLocaleString()}</p>
-            <div className="w-full h-32 bg-gray-100 rounded flex items-end">
-              {/* Placeholder for graph */}
-              <div className="w-full text-center text-gray-400">
-                <SalesGraph transactions={data.Transactions} />
+          {/* Top Cards */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Total Receivable */}
+              <div className="bg-white p-5 rounded-lg shadow-md">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Total Receivable</p>
+                    <p className="text-2xl font-bold text-gray-900">₹ {toCollect.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-1">You don't have any receivables as of now.</p>
+                  </div>
+                  <ArrowDown className="w-6 h-6 text-green-500 bg-green-100 rounded-full p-1" />
+                </div>
+              </div>
+              {/* Total Payable */}
+              <div className="bg-white p-5 rounded-lg shadow-md">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Total Payable</p>
+                    <p className="text-2xl font-bold text-gray-900">₹ {toPay.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      From {data?.purchase?.filter((obj) => obj.payment_type === "credit").length || 0} Party
+                    </p>
+                  </div>
+                  <ArrowUp className="w-6 h-6 text-red-500 bg-red-100 rounded-full p-1" />
+                </div>
+              </div>
+              {/* Stock Value */}
+              <div className="bg-white p-5 rounded-lg shadow-md">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">Stock Value</p>
+                    <p className="text-2xl font-bold text-gray-900">₹ {stockValue.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-1">As of Now</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Most Used Reports */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex space-x-3 overflow-x-auto">
-            <button className="whitespace-nowrap">Sale Report</button>
-            <button className="whitespace-nowrap">All Transactions</button>
-            <button className="whitespace-nowrap">Daybook Report</button>
-            <button className="whitespace-nowrap">Party Statement</button>
-          </div>
-          <button className="text-blue-600">View All</button>
-        </div>
+            {/* Sales Graph Section */}
+            <div className="bg-white p-5 rounded-lg shadow-md mb-6">
+              <div className="flex flex-row items-center justify-between pb-2">
+                <h3 className="text-lg font-semibold">Total Sale</h3>
+                <select defaultValue="month" className="w-32 border-blue-200 focus:border-blue-500">
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <div className="h-56 flex flex-col justify-center items-center">
+                <p className="text-2xl font-bold text-gray-900 mb-2">₹ {salesAmount.toLocaleString()}</p>
+                <div className="w-full h-32 bg-gray-100 rounded flex items-end">
+                  {/* Placeholder for graph */}
+                  <div className="w-full text-center text-gray-400">
+                    <SalesGraph transactions={data.Transactions} />
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* Tabs for extra widgets */}
-        <div className="w-full">
-          <div className="flex space-x-2 mb-4">
-            <button value="todo" onClick={() => setActiveTab("todo")} className={`px-4 py-2 rounded-md ${activeTab === "todo" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>To Do List</button>
-            <button value="lowstock" onClick={() => setActiveTab("lowstock")} className={`px-4 py-2 rounded-md ${activeTab === "lowstock" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Low Stock</button>
-            <button value="privacy" onClick={() => setActiveTab("privacy")} className={`px-4 py-2 rounded-md ${activeTab === "privacy" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Privacy</button>
-            <button value="social" onClick={() => setActiveTab("social")} className={`px-4 py-2 rounded-md ${activeTab === "social" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Follow Us</button>
+            {/* Most Used Reports */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex space-x-3 overflow-x-auto">
+                <button className="whitespace-nowrap">Sale Report</button>
+                <button className="whitespace-nowrap">All Transactions</button>
+                <button className="whitespace-nowrap">Daybook Report</button>
+                <button className="whitespace-nowrap">Party Statement</button>
+              </div>
+              <button className="text-blue-600">View All</button>
+            </div>
+
+            {/* Tabs for extra widgets */}
+            <div className="w-full">
+              <div className="flex space-x-2 mb-4">
+                <button value="todo" onClick={() => setActiveTab("todo")} className={`px-4 py-2 rounded-md ${activeTab === "todo" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>To Do List</button>
+                <button value="lowstock" onClick={() => setActiveTab("lowstock")} className={`px-4 py-2 rounded-md ${activeTab === "lowstock" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Low Stock</button>
+                <button value="privacy" onClick={() => setActiveTab("privacy")} className={`px-4 py-2 rounded-md ${activeTab === "privacy" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Privacy</button>
+                <button value="social" onClick={() => setActiveTab("social")} className={`px-4 py-2 rounded-md ${activeTab === "social" ? "bg-blue-100 text-blue-800 font-semibold" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Follow Us</button>
+              </div>
+              <div className="bg-white p-5 rounded-lg shadow-md">{renderTab()}</div>
+            </div>
           </div>
-          <div className="bg-white p-5 rounded-lg shadow-md">{renderTab()}</div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* Other pages */}
       {page === "overview" && <Undone />}

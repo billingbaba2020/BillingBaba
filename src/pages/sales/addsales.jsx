@@ -99,7 +99,7 @@ export default function AddSales({ data, setData, change, setChange }) {
     return invoice;
   }
   const [invoice_number, setInvoice_number] = useState(
-    generateUniqueInvoiceNumber(data.Transactions)
+  generateUniqueInvoiceNumber(data.Transactions || [])
   );
 
   const [Party, setParty] = useState(); // Initial index count
@@ -765,13 +765,13 @@ export default function AddSales({ data, setData, change, setChange }) {
                   )}
                   {data.settings?.ModelNum && (
                   <th className="px-1 py-1  border border-gray-300 border-t-0"></th>
-                    )}
+                )}
                   {data.settings?.ExpiringDate && (
                   <th className="px-1 py-1  border border-gray-300 border-t-0"></th>
-                    )}
+                )}
                   {data.settings?.MfgDate && ( 
                   <th className="px-1 py-1  border border-gray-300 border-t-0"></th>
-                    )}
+                )}
                   {data.settings?.size && (
                   <th className="px-1 py-1  border border-gray-300 border-t-0"></th>
                   )}

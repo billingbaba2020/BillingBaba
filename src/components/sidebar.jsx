@@ -1,32 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Home,
-  Users,
-  Package,
-  DollarSign,
-  ShoppingCart,
-  TrendingUp,
-  Banknote,
-  BarChart3,
-  RefreshCw,
-  Wrench,
-  Settings,
-  Crown,
-  ChevronDown,
-  ChevronRight,
-  Plus,
-  Search,
-  User,
-  Building2,
-  Menu,
-  X
+  Home, Users, Package, DollarSign, ShoppingCart, TrendingUp, Banknote,
+  BarChart3, RefreshCw, Wrench, Settings, Crown, ChevronDown, ChevronRight,
+  Plus, Search, Building2, Menu, X
 } from "lucide-react";
 
 export default function Sidebar({ part, subpart, data = null }) {
   const Navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (part === "sale") {
@@ -36,37 +20,16 @@ export default function Sidebar({ part, subpart, data = null }) {
 
   const menuItems = [
     {
-      id: "dashboard",
-      label: "Home",
-      icon: Home,
-      path: "/",
-      active: part === "dashboard"
+      id: "dashboard", label: "Home", icon: Home, path: "/", active: part === "dashboard"
     },
     {
-      id: "parties",
-      label: "Parties",
-      icon: Users,
-      path: "/parties",
-      active: part === "parties",
-      hasAdd: true,
-      addPath: "/AddParties"
+      id: "parties", label: "Parties", icon: Users, path: "/parties", active: part === "parties", hasAdd: true, addPath: "/AddParties"
     },
     {
-      id: "items",
-      label: "Items",
-      icon: Package,
-      path: "/items",
-      active: part === "items",
-      hasAdd: true,
-      addPath: "/add-items"
+      id: "items", label: "Items", icon: Package, path: "/items", active: part === "items", hasAdd: true, addPath: "/add-items"
     },
     {
-      id: "sale",
-      label: "Sale",
-      icon: DollarSign,
-      active: part === "sale",
-      hasDropdown: true,
-      dropdownId: "sales",
+      id: "sale", label: "Sale", icon: DollarSign, active: part === "sale", hasDropdown: true, dropdownId: "sales",
       children: [
         { label: "Sale Invoice", path: "/sale-invoice", subpart: "sale-invoice" },
         { label: "Estimation", path: "/estimation", subpart: "estimation", condition: data?.settings?.estmateQ },
@@ -77,12 +40,7 @@ export default function Sidebar({ part, subpart, data = null }) {
       ]
     },
     {
-      id: "purchase",
-      label: "Purchase & Expense",
-      icon: ShoppingCart,
-      active: part === "purchase",
-      hasDropdown: true,
-      dropdownId: "purchase",
+      id: "purchase", label: "Purchase & Expense", icon: ShoppingCart, active: part === "purchase", hasDropdown: true, dropdownId: "purchase",
       children: [
         { label: "Purchase Bill", path: "/purchase-bill", subpart: "purchase-bill" },
         { label: "Purchase Order", path: "/purchase-order", subpart: "purchase-order" },
@@ -91,37 +49,19 @@ export default function Sidebar({ part, subpart, data = null }) {
       ]
     },
     {
-      id: "billing",
-      label: "Grow Your Business",
-      icon: TrendingUp,
-      path: "/quick-billing",
-      active: part === "billing"
+      id: "billing", label: "Grow Your Business", icon: TrendingUp, path: "/quick-billing", active: part === "billing"
     },
     {
-      id: "cashAndBank",
-      label: "Cash & Bank",
-      icon: Banknote,
-      path: "/cash-and-bank",
-      active: part === "cashAndBank",
-      hasDropdown: true,
-      dropdownId: "cash",
+      id: "cashAndBank", label: "Cash & Bank", icon: Banknote, path: "/cash-and-bank", active: part === "cashAndBank", hasDropdown: true, dropdownId: "cash",
       children: [
         { label: "Coming Soon", path: "/cash-and-bank", subpart: "cash-and-bank" }
       ]
     },
     {
-      id: "report",
-      label: "Reports",
-      icon: BarChart3,
-      path: "/report",
-      active: part === "report"
+      id: "report", label: "Reports", icon: BarChart3, path: "/report", active: part === "report"
     },
     {
-      id: "sync-n-share",
-      label: "Sync, Share & Backup",
-      icon: RefreshCw,
-      hasDropdown: true,
-      dropdownId: "sync",
+      id: "sync-n-share", label: "Sync, Share & Backup", icon: RefreshCw, hasDropdown: true, dropdownId: "sync",
       children: [
         { label: "Sync & Share", path: "/sync-n-share", subpart: "sync-n-share" },
         { label: "Backup/Restore", path: "/backup-n-restore", subpart: "backup-n-restore" },
@@ -129,12 +69,7 @@ export default function Sidebar({ part, subpart, data = null }) {
       ]
     },
     {
-      id: "utils",
-      label: "Utilities",
-      icon: Wrench,
-      active: part === "utils",
-      hasDropdown: true,
-      dropdownId: "utils",
+      id: "utils", label: "Utilities", icon: Wrench, active: part === "utils", hasDropdown: true, dropdownId: "utils",
       children: [
         { label: "Generate Barcode", path: "/barcodeMaker", subpart: "generate-barcode" },
         { label: "Import Items", path: "/import-items", subpart: "import-items" },
@@ -145,30 +80,45 @@ export default function Sidebar({ part, subpart, data = null }) {
       ]
     },
     {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
-      path: "/settings",
-      active: part === "settings"
+      id: "settings", label: "Settings", icon: Settings, path: "/settings", active: part === "settings"
     },
     {
-      id: "superadmin",
-      label: "Plans & Pricing",
-      icon: Crown,
-      path: "/superadmin",
-      active: part === "superadmin"
+      id: "superadmin", label: "Plans & Pricing", icon: Crown, path: "/superadmin", active: part === "superadmin"
     }
   ];
 
+  const flattenedResults = menuItems.flatMap(item => {
+    if (item.hasDropdown && item.children) {
+      return item.children
+        .filter(c => c.condition !== false)
+        .map(c => ({
+          label: `${item.label} → ${c.label}`,
+          path: c.path,
+          icon: item.icon
+        }));
+    }
+    return {
+      label: item.label,
+      path: item.path,
+      icon: item.icon
+    };
+  });
+
+  const searchResults = searchQuery.trim()
+    ? flattenedResults.filter(result =>
+        result.label.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   const handleDropdownToggle = (dropdownId) => {
-    if (isCollapsed) return; // Don't open dropdowns when collapsed
+    if (isCollapsed) return;
     setIsDropdownOpen(isDropdownOpen === dropdownId ? "" : dropdownId);
   };
 
   const handleToggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
     if (!isCollapsed) {
-      setIsDropdownOpen(""); // Close all dropdowns when collapsing
+      setIsDropdownOpen("");
     }
   };
 
@@ -181,22 +131,14 @@ export default function Sidebar({ part, subpart, data = null }) {
         <div key={item.id} className="mb-1">
           <button
             onClick={() => handleDropdownToggle(item.dropdownId)}
-            className={`w-full flex items-center justify-between px-4 py-3 text-left text-gray-300 hover:bg-slate-700 hover:text-white transition-colors rounded-lg group ${
-              item.active ? 'bg-slate-700 text-white' : ''
-            }`}
+            className={`w-full flex items-center justify-between px-4 py-3 text-left text-gray-300 hover:bg-slate-700 hover:text-white transition-colors rounded-lg group ${item.active ? 'bg-slate-700 text-white' : ''}`}
           >
             <div className="flex items-center space-x-3">
               <IconComponent className="w-5 h-5" />
               {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
             </div>
-            {!isCollapsed && (isOpen ? (
-              <ChevronDown className="w-4 h-4" />
-            ) : (
-              <ChevronRight className="w-4 h-4" />
-            ))}
+            {!isCollapsed && (isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />)}
           </button>
-          
-          {/* Dropdown Menu */}
           <div className={`overflow-hidden transition-all duration-200 ${isOpen && !isCollapsed ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
             <div className="ml-8 mt-1 space-y-1">
               {item.children?.map((child) => {
@@ -205,9 +147,7 @@ export default function Sidebar({ part, subpart, data = null }) {
                   <Link
                     key={child.path}
                     to={child.path}
-                    className={`block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-slate-700 rounded-md transition-colors ${
-                      subpart === child.subpart ? 'text-white bg-slate-700' : ''
-                    }`}
+                    className={`block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-slate-700 rounded-md transition-colors ${subpart === child.subpart ? 'text-white bg-slate-700' : ''}`}
                   >
                     {child.label}
                   </Link>
@@ -223,9 +163,7 @@ export default function Sidebar({ part, subpart, data = null }) {
       <div key={item.id} className="mb-1">
         <Link
           to={item.path}
-          className={`flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-slate-700 hover:text-white transition-colors rounded-lg group ${
-            item.active ? 'bg-slate-700 text-white' : ''
-          }`}
+          className={`flex items-center justify-between px-4 py-3 text-gray-300 hover:bg-slate-700 hover:text-white transition-colors rounded-lg group ${item.active ? 'bg-slate-700 text-white' : ''}`}
         >
           <div className="flex items-center space-x-3">
             <IconComponent className="w-5 h-5" />
@@ -247,38 +185,48 @@ export default function Sidebar({ part, subpart, data = null }) {
 
   return (
     <div className={`flex flex-col h-full bg-slate-800 text-white transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
-      {/* Toggle Button */}
+      {/* Top Header */}
       <div className="p-4 border-b border-slate-700 flex justify-between items-center">
-        {!isCollapsed && (
-          <h2 className="text-lg font-semibold text-white">Menu</h2>
-        )}
-        <button
-          onClick={handleToggleCollapse}
-          className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-        >
-          {isCollapsed ? (
-            <Menu className="w-5 h-5 text-gray-300" />
-          ) : (
-            <X className="w-5 h-5 text-gray-300" />
-          )}
+        {!isCollapsed && <h2 className="text-lg font-semibold text-white">Menu</h2>}
+        <button onClick={handleToggleCollapse} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+          {isCollapsed ? <Menu className="w-5 h-5 text-gray-300" /> : <X className="w-5 h-5 text-gray-300" />}
         </button>
       </div>
 
-      {/* Search Bar */}
+      {/* Search bar + dropdown */}
       {!isCollapsed && (
-        <div className="p-4 border-b border-slate-700">
+        <div className="p-4 border-b border-slate-700 relative">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Open Anything (Ctrl+F)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+
+          {searchResults.length > 0 && (
+            <div className="absolute z-20 top-full mt-1 left-0 right-0 bg-slate-700 border border-slate-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {searchResults.map((result, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    Navigate(result.path);
+                    setSearchQuery("");
+                  }}
+                  className="w-full flex items-center px-4 py-2 text-sm text-left text-white hover:bg-slate-600"
+                >
+                  <result.icon className="w-4 h-4 mr-2 text-gray-400" />
+                  {result.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Collapsed Search Icon */}
       {isCollapsed && (
         <div className="p-4 border-b border-slate-700 flex justify-center">
           <button className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
@@ -287,7 +235,7 @@ export default function Sidebar({ part, subpart, data = null }) {
         </div>
       )}
 
-      {/* Navigation Menu */}
+      {/* Menu Items */}
       <div className="flex-1 overflow-y-auto p-4">
         <nav className="space-y-1">
           {menuItems.map(renderMenuItem)}
@@ -315,7 +263,6 @@ export default function Sidebar({ part, subpart, data = null }) {
         </div>
       )}
 
-      {/* Collapsed Trial Icon */}
       {isCollapsed && (
         <div className="p-4 border-t border-slate-700 flex justify-center">
           <button

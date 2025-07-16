@@ -24,6 +24,34 @@ export default function AddItem({
   const [startDate, setStartDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [unitToggle, setUnitToggle] = useState(false);
+  var [toggle, setToggle] = useState(t);
+  var [page, setPage] = useState("pricing");
+  var [itemName, setitemName] = useState();
+  var [itemHSN, setitemHSN] = useState();
+  var [itemCategory, setitemCategory] = useState();
+  var [itemCode, setitemCode] = useState();
+  var [sellPrice, setSellPrice] = useState();
+  var [WholeSalePrice, setWholeSalePrice] = useState();
+  var [MRP, setMRP] = useState();
+  var [MRP_salePrice, setMRP_salePrice] = useState();
+  var [MRP_wholeSalePrice, setMRP_wholeSalePrice] = useState();
+  var [description, setdescription] = useState();
+  var [discount, setDescount] = useState();
+  var [purchaseprice, setPurchasePrice] = useState();
+  var [tax, setTax] = useState(0);
+  var [openingQuantity, setOpeningQuantity] = useState();
+  var [atPrice, setAtPrice] = useState();
+  var [asDate, setAsDate] = useState();
+  var [minToMaintain, setMinToMaintain] = useState(10);
+  var [Storagecapacity, setStoragecapacity] = useState();
+  var [location, setLocation] = useState();
+  var [primaryUnit, setprimaryUnit] = useState();
+  var [SecondaryUnit, setSecondaryUnit] = useState();
+  var [Conversion, setConversion] = useState();
+  var [editUnits, setEditUnits] = useState({primary:"",secondary:"",conversion:""});
+  var [ImageURL, setImageUrl] = useState();
+  var [ImageList, setImageList] = useState();
+
   const [showPopup, setShowPopup] = useState(false);
   const [ImageList, setImageList] = useState([]);
   const [onlineStoreImages, setOnlineStoreImages] = useState([]);
@@ -176,6 +204,60 @@ export default function AddItem({
         validationErrors.wholesalePriceExceedsMRP || 
         validationErrors.requiredFieldsMissing) {
       return;
+  const addItemReq = async () => {
+
+    if (sellPrice < discount) {
+      alert("discount can't be more than sales price");
+      // toast("discount can't be more than sales price", {
+      //   position: "top-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: false,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   // transition: "Bounce",
+      //   })
+      return
+    } else if (purchaseprice >= sellPrice - discount) {
+      alert("purchase price more than sale price, please fix");
+      // toast("purchase price more than sale price, please fix", {
+      //   position: "top-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: false,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   // transition: "Bounce",
+      //   })
+      return
+    } else if (MRP < purchaseprice) {
+      alert("MRP more than purchase price, please fix");
+    }
+    if (
+      !itemName ||
+      !itemCode ||
+      !sellPrice ||
+      !discount ||
+      !purchaseprice ||
+      !tax ||
+      !primaryUnit
+      ) {
+        alert("Please fill all the fields");
+        // toast("Please fill all the fields", {
+        //   position: "top-right",
+        //   autoClose: 5000,
+        //   hideProgressBar: false,
+        //   closeOnClick: false,
+        //   pauseOnHover: true,
+        //   draggable: true,
+        //   progress: undefined,
+        //   theme: "light",
+        //   // transition: "Bounce",
+        //   })
     }
 
     setLoading(true);
@@ -392,6 +474,56 @@ export default function AddItem({
                         handleInputChange('primaryUnit', { name: newValue?.label || '', done: true })
                       }
                     />
+                    {/* <CustomInput
+                      inputValue={primaryUnit}
+                      setInputValue={setprimaryUnit}
+                      placeholder={"Primary Unit"}
+                    /> */}
+                    <Autocomplete
+                      disablePortal
+                      options={data?.units.map((unit)=> ({label:unit.name}))}
+                      sx={{ width: 250 }}
+                      renderInput={(params) => <TextField {...params} label="Units" />}
+                      value={editUnits?.primary}
+                      onChange={(event, newValue) =>
+                        setEditUnits({...editUnits, primary: newValue?.label})
+                      }
+                    />
+
+                    {/* <input
+                      type="text"
+                      className="p-2 border border-gray-400"
+                      value={primaryUnit?.name}
+                      onChange={(e) =>
+                        setprimaryUnit({ name: e.target.value, done: false })
+                      }
+                    />
+                    {primaryUnit?.name && !primaryUnit?.done && (
+                      <div className="absolute left-0 top-30 bg-white shadow-lg max-h-[300px] overflow-y-auto px-2">
+                        {data?.units
+                          ?.filter(
+                            (e) =>
+                              primaryUnit?.name
+                                .toLowerCase()
+                                .split(" ")
+                                .every((word) =>
+                                  e.name.toLowerCase().includes(word)
+                                )
+                            // e.partyName.toLowerCase().includes(SearchQuerry.toLowerCase())
+                          )
+                          .map((item, index) => (
+                            <div
+                              className={`p-2 w-full hover:bg-gray-200 cursor-pointer`}
+                              key={index}
+                              onClick={() =>
+                                setprimaryUnit({ name: item.name, done: true })
+                              }
+                            >
+                              <h1>{item.name}</h1>
+                            </div>
+                          ))}
+                      </div>
+                    )} */}
                   </div>
                   <div className="relative">
                     <h1>Secondary Unit</h1>
@@ -405,6 +537,7 @@ export default function AddItem({
                         handleInputChange('SecondaryUnit', { name: newValue?.label || '', done: true })
                       }
                     />
+
                   </div>
                 </div>
                 {formData.SecondaryUnit?.name && (

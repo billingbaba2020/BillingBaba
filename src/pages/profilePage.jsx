@@ -34,7 +34,7 @@ export default function Profile({ data, setData }) {
   const fetchGSTINDetails = async (gstin) => {
     try {
       const response = await axios.get(
-        `https://gst-number.com/api/${API_KEY}/gst/${gstin}`
+        'https://sheet.gstincheck.co.in/check/${API_KEY}/${gstin}'
       );
       if (response.data.status === "success") {
         const d = response.data.data;
@@ -56,7 +56,7 @@ export default function Profile({ data, setData }) {
       }
     } catch (err) {
       console.error("GST fetch error", err);
-      alert("Error fetching GST details.");
+      alert("GST fetch error", err.response?.data || err.message || err);
     }
   };
 
@@ -94,83 +94,6 @@ export default function Profile({ data, setData }) {
 
   return (
     <>
-      <div className="p-4">
-        <h1 className="text-xl font-bold mb-4">Profile</h1>
-
-        <div className="mb-4">
-          <label className="block font-medium">GSTIN</label>
-          <input
-            type="text"
-            value={ProfileDat.GSTIN}
-            readOnly
-            className="w-full border px-3 py-2 bg-gray-100 text-gray-500 rounded"
-          />
-          <button
-            onClick={() => fetchGSTINDetails(ProfileDat.GSTIN)}
-            className="mt-2 bg-blue-500 text-white px-3 py-1 text-sm rounded hover:bg-blue-600"
-          >
-            Auto-Fill from GSTIN
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block">Business Name</label>
-            <input
-              type="text"
-              value={ProfileDat.BusinessName}
-              onChange={(e) =>
-                setProfileDat({ ...ProfileDat, BusinessName: e.target.value })
-              }
-              className="w-full border px-3 py-2 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">City</label>
-            <input
-              type="text"
-              value={ProfileDat.City}
-              onChange={(e) =>
-                setProfileDat({ ...ProfileDat, City: e.target.value })
-              }
-              className="w-full border px-3 py-2 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">State</label>
-            <input
-              type="text"
-              value={ProfileDat.State}
-              onChange={(e) =>
-                setProfileDat({ ...ProfileDat, State: e.target.value })
-              }
-              className="w-full border px-3 py-2 rounded"
-            />
-          </div>
-          <div>
-            <label className="block">Pincode</label>
-            <input
-              type="text"
-              value={ProfileDat.pincode}
-              onChange={(e) =>
-                setProfileDat({ ...ProfileDat, pincode: e.target.value })
-              }
-              className="w-full border px-3 py-2 rounded"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block">Address</label>
-            <input
-              type="text"
-              value={ProfileDat.address}
-              onChange={(e) =>
-                setProfileDat({ ...ProfileDat, address: e.target.value })
-              }
-              className="w-full border px-3 py-2 rounded"
-            />
-          </div>
-        </div>
-      </div>
       <div className="w-full h-full flex flex-col items-center">
         <div className="flex w-full justify-evenly gap-2 bg-[#f9f8f2]">
         <button
@@ -348,12 +271,14 @@ export default function Profile({ data, setData }) {
               <div>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-semibold">
-                    GSTIN (disabled)
+                    GSTIN 
                   </label>
                   <input
                     type="text"
                     value={ProfileDat.GSTIN}
-                    readOnly
+                    onChange={(e) =>
+                      setProfileDat({ ...ProfileDat, GSTIN: e.target.value })
+                    }
                     className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
                   />
                   <button

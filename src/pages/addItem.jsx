@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import CustomInput from "../components/customInput";
 import Undone from "../components/undone";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,7 @@ import Loader from "./Loader";
 import { useLocation } from "react-router-dom";
 import ImageUploader from "../components/ImgUpload";
 import { ToastContainer, toast } from 'react-toastify';
-import { Autocomplete } from "@mui/material";
-import { MenuItem } from "@mui/material";
+import { Autocomplete, MenuItem } from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -21,42 +20,13 @@ export default function AddItem({
   setChange,
 }) {
   const Navigate = useNavigate();
-  const [startDate, setStartDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [unitToggle, setUnitToggle] = useState(false);
-  var [toggle, setToggle] = useState(t);
-  var [page, setPage] = useState("pricing");
-  var [itemName, setitemName] = useState();
-  var [itemHSN, setitemHSN] = useState();
-  var [itemCategory, setitemCategory] = useState();
-  var [itemCode, setitemCode] = useState();
-  var [sellPrice, setSellPrice] = useState();
-  var [WholeSalePrice, setWholeSalePrice] = useState();
-  var [MRP, setMRP] = useState();
-  var [MRP_salePrice, setMRP_salePrice] = useState();
-  var [MRP_wholeSalePrice, setMRP_wholeSalePrice] = useState();
-  var [description, setdescription] = useState();
-  var [discount, setDescount] = useState();
-  var [purchaseprice, setPurchasePrice] = useState();
-  var [tax, setTax] = useState(0);
-  var [openingQuantity, setOpeningQuantity] = useState();
-  var [atPrice, setAtPrice] = useState();
-  var [asDate, setAsDate] = useState();
-  var [minToMaintain, setMinToMaintain] = useState(10);
-  var [Storagecapacity, setStoragecapacity] = useState();
-  var [location, setLocation] = useState();
-  var [primaryUnit, setprimaryUnit] = useState();
-  var [SecondaryUnit, setSecondaryUnit] = useState();
-  var [Conversion, setConversion] = useState();
-  var [editUnits, setEditUnits] = useState({primary:"",secondary:"",conversion:""});
-  var [ImageURL, setImageUrl] = useState();
-  var [ImageList, setImageList] = useState();
-
+  const [toggle, setToggle] = useState(t);
+  const [page, setPage] = useState("pricing");
   const [showPopup, setShowPopup] = useState(false);
   const [ImageList, setImageList] = useState([]);
   const [onlineStoreImages, setOnlineStoreImages] = useState([]);
-  const [page, setPage] = useState("pricing");
-  const [toggle, setToggle] = useState(t);
   const [showInOnlineStore, setShowInOnlineStore] = useState(false);
 
   // Combined form state
@@ -92,6 +62,15 @@ export default function AddItem({
     wholesalePriceExceedsMRP: false,
     requiredFieldsMissing: true
   });
+
+  const params = new URLSearchParams(window.location.search);
+  const urlPram = params.get("data");
+
+  useEffect(() => {
+    if (urlPram === "services") {
+      setToggle(false);
+    }
+  }, [urlPram]);
 
   // Handle input changes
   const handleInputChange = (field, value) => {
@@ -155,15 +134,6 @@ export default function AddItem({
     formData.primaryUnit.name
   ]);
 
-  const params = new URLSearchParams(window.location.search);
-  let urlPram = params.get("data");
-
-  useEffect(() => {
-    if (urlPram == "services") {
-      setToggle(false);
-    }
-  }, [urlPram]);
-
   function generate13DigitNumberString() {
     let numberString = "";
     for (let i = 0; i < 13; i++) {
@@ -204,63 +174,8 @@ export default function AddItem({
         validationErrors.wholesalePriceExceedsMRP || 
         validationErrors.requiredFieldsMissing) {
       return;
-  const addItemReq = async () => {
-
-    if (sellPrice < discount) {
-      alert("discount can't be more than sales price");
-      // toast("discount can't be more than sales price", {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   // transition: "Bounce",
-      //   })
-      return
-    } else if (purchaseprice >= sellPrice - discount) {
-      alert("purchase price more than sale price, please fix");
-      // toast("purchase price more than sale price, please fix", {
-      //   position: "top-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   // transition: "Bounce",
-      //   })
-      return
-    } else if (MRP < purchaseprice) {
-      alert("MRP more than purchase price, please fix");
-    }
-    if (
-      !itemName ||
-      !itemCode ||
-      !sellPrice ||
-      !discount ||
-      !purchaseprice ||
-      !tax ||
-      !primaryUnit
-      ) {
-        alert("Please fill all the fields");
-        // toast("Please fill all the fields", {
-        //   position: "top-right",
-        //   autoClose: 5000,
-        //   hideProgressBar: false,
-        //   closeOnClick: false,
-        //   pauseOnHover: true,
-        //   draggable: true,
-        //   progress: undefined,
-        //   theme: "light",
-        //   // transition: "Bounce",
-        //   })
     }
 
-    setLoading(true);
     let newData;
     if (toggle) {
       newData = {
@@ -384,7 +299,7 @@ export default function AddItem({
                 fill="#000"
                 viewBox="0 0 512 512"
               >
-                <path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
+                <path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4 24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
               </svg>
             </button>
             <button onClick={() => Navigate("/items")}>
@@ -474,56 +389,6 @@ export default function AddItem({
                         handleInputChange('primaryUnit', { name: newValue?.label || '', done: true })
                       }
                     />
-                    {/* <CustomInput
-                      inputValue={primaryUnit}
-                      setInputValue={setprimaryUnit}
-                      placeholder={"Primary Unit"}
-                    /> */}
-                    <Autocomplete
-                      disablePortal
-                      options={data?.units.map((unit)=> ({label:unit.name}))}
-                      sx={{ width: 250 }}
-                      renderInput={(params) => <TextField {...params} label="Units" />}
-                      value={editUnits?.primary}
-                      onChange={(event, newValue) =>
-                        setEditUnits({...editUnits, primary: newValue?.label})
-                      }
-                    />
-
-                    {/* <input
-                      type="text"
-                      className="p-2 border border-gray-400"
-                      value={primaryUnit?.name}
-                      onChange={(e) =>
-                        setprimaryUnit({ name: e.target.value, done: false })
-                      }
-                    />
-                    {primaryUnit?.name && !primaryUnit?.done && (
-                      <div className="absolute left-0 top-30 bg-white shadow-lg max-h-[300px] overflow-y-auto px-2">
-                        {data?.units
-                          ?.filter(
-                            (e) =>
-                              primaryUnit?.name
-                                .toLowerCase()
-                                .split(" ")
-                                .every((word) =>
-                                  e.name.toLowerCase().includes(word)
-                                )
-                            // e.partyName.toLowerCase().includes(SearchQuerry.toLowerCase())
-                          )
-                          .map((item, index) => (
-                            <div
-                              className={`p-2 w-full hover:bg-gray-200 cursor-pointer`}
-                              key={index}
-                              onClick={() =>
-                                setprimaryUnit({ name: item.name, done: true })
-                              }
-                            >
-                              <h1>{item.name}</h1>
-                            </div>
-                          ))}
-                      </div>
-                    )} */}
                   </div>
                   <div className="relative">
                     <h1>Secondary Unit</h1>
@@ -537,7 +402,6 @@ export default function AddItem({
                         handleInputChange('SecondaryUnit', { name: newValue?.label || '', done: true })
                       }
                     />
-
                   </div>
                 </div>
                 {formData.SecondaryUnit?.name && (
@@ -625,7 +489,7 @@ export default function AddItem({
               >
                 <span className="hover:underline">Add Product Images</span>{" "}
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="w-4 h-4">
-                  <path d="..." />
+                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
                 </svg>
               </button>
 
@@ -639,7 +503,7 @@ export default function AddItem({
                         onClick={() => removeImage(index)}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" className="w-2.5 h-2.5">
-                          <path d="..." />
+                          <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
                         </svg>
                       </button>
                     </div>
@@ -984,7 +848,7 @@ export default function AddItem({
                 >
                   <span>Add Images for Online Store</span>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="w-4 h-4">
-                    <path d="..." />
+                    <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
                   </svg>
                 </button>
 
@@ -1002,7 +866,7 @@ export default function AddItem({
                           onClick={() => removeImage(index, true)}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" className="w-3 h-3">
-                            <path d="..." />
+                            <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
                           </svg>
                         </button>
                       </div>
